@@ -62,16 +62,18 @@ const enHref = pageHref('privacy', 'en');
   <section id="practices">
     <h2 class="sh">{t('pv.s2_h')}</h2>
     <p>{t('pv.s2_p')}</p>
-    <table class="tbl">
-      <thead>
-        <tr><th>{t('pv.th1')}</th><th>{t('pv.th2')}</th><th>{t('pv.th3')}</th><th>{t('pv.th4')}</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>{t('pv.r1c1')}</td><td>{t('pv.r1c2')}</td><td class="no">{t('pv.no')}</td><td class="no">{t('pv.no')}</td></tr>
-        <tr><td>{t('pv.r2c1')}</td><td>{t('pv.r2c2')}</td><td class="no">{t('pv.no')}</td><td class="no">{t('pv.no')}</td></tr>
-        <tr><td>{t('pv.r3c1')}</td><td class="no">{t('pv.r3c2')}</td><td class="no">{t('pv.no')}</td><td class="no">{t('pv.no')}</td></tr>
-      </tbody>
-    </table>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr><th>{t('pv.th1')}</th><th>{t('pv.th2')}</th><th>{t('pv.th3')}</th><th>{t('pv.th4')}</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>{t('pv.r1c1')}</td><td>{t('pv.r1c2')}</td><td class="no">{t('pv.no')}</td><td class="no">{t('pv.no')}</td></tr>
+          <tr><td>{t('pv.r2c1')}</td><td>{t('pv.r2c2')}</td><td class="no">{t('pv.no')}</td><td class="no">{t('pv.no')}</td></tr>
+          <tr><td>{t('pv.r3c1')}</td><td class="no">{t('pv.r3c2')}</td><td class="no">{t('pv.no')}</td><td class="no">{t('pv.no')}</td></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <section id="storage">
@@ -258,10 +260,17 @@ const enHref = pageHref('privacy', 'en');
     font-weight: 650;
   }
 
+  /* Lets the table scroll horizontally instead of cramping on narrow phones. */
+  .tbl-wrap {
+    margin: 18px 0 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--r-sm);
+  }
   .tbl {
     width: 100%;
+    min-width: 520px;
     border-collapse: collapse;
-    margin: 18px 0 6px;
     font-size: 15px;
     border: 1px solid var(--hair);
     border-radius: var(--r-sm);

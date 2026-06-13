@@ -20,7 +20,7 @@ const APP_STORE = 'https://apps.apple.com/pe/app/calarm-smart-alarms/id677241932
 <nav class="nav" id="nav">
   <div class="wrap row">
     <a href={homeHref} class="brand">
-      <Image src={appIcon} alt="Calarm" width={68} height={68} loading="eager" /> Calarm
+      <Image src={appIcon} alt="Calarm" width={68} height={68} loading="eager" /><span class="wordmark">Calarm</span>
     </a>
     <div class="nav-links">
       <a href="#features">{t('nav.features')}</a>
@@ -91,6 +91,30 @@ const APP_STORE = 'https://apps.apple.com/pe/app/calarm-smart-alarms/id677241932
   }
   @media (max-width: 920px) {
     .nav-links {
+      display: none;
+    }
+  }
+  /* Tighten the bar so logo + language toggle + CTA fit small phones. */
+  @media (max-width: 560px) {
+    .row {
+      gap: 12px;
+    }
+    .brand {
+      font-size: 18px;
+      gap: 9px;
+    }
+    .brand :global(img) {
+      width: 30px;
+      height: 30px;
+    }
+    .nav-cta {
+      padding: 9px 15px;
+      font-size: 14px;
+    }
+  }
+  /* Smallest phones: drop the wordmark, keep the icon (still links home). */
+  @media (max-width: 400px) {
+    .brand .wordmark {
       display: none;
     }
   }
