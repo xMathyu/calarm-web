@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Internal sales deck — functional but not meant for search indexing.
+Disallow: /pitch-deck.html
+
+Sitemap: https://calarm.mathyusolutions.com/sitemap-index.xml

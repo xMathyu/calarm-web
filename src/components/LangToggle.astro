@@ -1,0 +1,42 @@
+---
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  esHref: string;
+  enHref: string;
+}
+const { lang, esHref, enHref } = Astro.props;
+---
+
+<div class="lang">
+  <a href={esHref} hreflang="es" class:list={['lbtn', { on: lang === 'es' }]} aria-label="Español">ES</a>
+  <a href={enHref} hreflang="en" class:list={['lbtn', { on: lang === 'en' }]} aria-label="English">EN</a>
+</div>
+
+<style>
+  .lang {
+    display: inline-flex;
+    background: var(--card);
+    border: 1px solid var(--hair);
+    border-radius: 999px;
+    padding: 3px;
+  }
+  .lbtn {
+    color: var(--dim);
+    font-family: var(--font);
+    font-weight: 650;
+    font-size: 13px;
+    padding: 6px 13px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .lbtn.on {
+    background: var(--grad);
+    color: #1a0c04;
+  }
+  .lbtn:hover:not(.on) {
+    color: var(--ink);
+  }
+</style>

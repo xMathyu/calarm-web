@@ -1,0 +1,359 @@
+---
+import { Image } from 'astro:assets';
+import appIcon from '../assets/images/app-icon.png';
+import LangToggle from './LangToggle.astro';
+import { useTranslations, pageHref } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const homeHref = pageHref('home', lang);
+const esHref = pageHref('privacy', 'es');
+const enHref = pageHref('privacy', 'en');
+---
+
+<nav class="nav">
+  <div class="wrap row">
+    <a href={homeHref} class="brand">
+      <Image src={appIcon} alt="Calarm" width={64} height={64} loading="eager" /> Calarm
+    </a>
+    <div class="spacer"></div>
+    <LangToggle lang={lang} esHref={esHref} enHref={enHref} />
+    <a href={homeHref} class="back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <span>{t('pv.back')}</span>
+    </a>
+  </div>
+</nav>
+
+<main class="doc">
+  <div class="doc-head">
+    <span class="eyebrow">{t('pv.ey')}</span>
+    <h1>{t('pv.title')}</h1>
+    <p class="lead">{t('pv.lead')}</p>
+    <p class="updated">{t('pv.updated')}</p>
+  </div>
+
+  <div class="tldr">
+    <h2>{t('pv.tldr_h')}</h2>
+    <ul>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span>{t('pv.tldr1')}</span></li>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span>{t('pv.tldr2')}</span></li>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span>{t('pv.tldr3')}</span></li>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span>{t('pv.tldr4')}</span></li>
+    </ul>
+  </div>
+
+  <section id="access">
+    <h2 class="sh">{t('pv.s1_h')}</h2>
+    <p>{t('pv.s1_p')}</p>
+    <h3>{t('pv.s1a_h')}</h3>
+    <p set:html={t('pv.s1a_p')} />
+    <h3>{t('pv.s1b_h')}</h3>
+    <p set:html={t('pv.s1b_p')} />
+    <h3>{t('pv.s1c_h')}</h3>
+    <p>{t('pv.s1c_p')}</p>
+  </section>
+
+  <section id="practices">
+    <h2 class="sh">{t('pv.s2_h')}</h2>
+    <p>{t('pv.s2_p')}</p>
+    <table class="tbl">
+      <thead>
+        <tr><th>{t('pv.th1')}</th><th>{t('pv.th2')}</th><th>{t('pv.th3')}</th><th>{t('pv.th4')}</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>{t('pv.r1c1')}</td><td>{t('pv.r1c2')}</td><td class="no">{t('pv.no')}</td><td class="no">{t('pv.no')}</td></tr>
+        <tr><td>{t('pv.r2c1')}</td><td>{t('pv.r2c2')}</td><td class="no">{t('pv.no')}</td><td class="no">{t('pv.no')}</td></tr>
+        <tr><td>{t('pv.r3c1')}</td><td class="no">{t('pv.r3c2')}</td><td class="no">{t('pv.no')}</td><td class="no">{t('pv.no')}</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="storage">
+    <h2 class="sh">{t('pv.s3_h')}</h2>
+    <p>{t('pv.s3_p')}</p>
+    <div class="callout">
+      <p>{t('pv.s3_callout')}</p>
+    </div>
+  </section>
+
+  <section id="sharing">
+    <h2 class="sh">{t('pv.s4_h')}</h2>
+    <p>{t('pv.s4_p')}</p>
+  </section>
+
+  <section id="children">
+    <h2 class="sh">{t('pv.s5_h')}</h2>
+    <p>{t('pv.s5_p')}</p>
+  </section>
+
+  <section id="changes">
+    <h2 class="sh">{t('pv.s6_h')}</h2>
+    <p>{t('pv.s6_p')}</p>
+  </section>
+
+  <section id="contact">
+    <h2 class="sh">{t('pv.s7_h')}</h2>
+    <p>{t('pv.s7_p')}</p>
+    <div class="contact-card">
+      <p class="cc-name"><strong>Mathyu Solutions</strong></p>
+      <p class="cc-line"><a href="mailto:xmathyu@gmail.com">xmathyu@gmail.com</a></p>
+      <p class="cc-last"><a href="https://github.com/xMathyu/Calarm/issues" target="_blank" rel="noopener">github.com/xMathyu/Calarm/issues</a></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span>© 2026 Mathyu Solutions · Calarm</span>
+    <a href={homeHref}>{t('pv.foot_back')}</a>
+  </div>
+</footer>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(8, 9, 12, 0.78);
+    backdrop-filter: blur(18px) saturate(160%);
+    border-bottom: 1px solid var(--hair);
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    height: 64px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-weight: 750;
+    font-size: 19px;
+    letter-spacing: -0.02em;
+  }
+  .brand :global(img) {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+  .spacer {
+    flex: 1;
+  }
+  .back {
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 550;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: color 0.2s;
+  }
+  .back:hover {
+    color: var(--ink);
+  }
+  .back svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .doc {
+    max-width: 760px;
+    margin-inline: auto;
+    padding: 64px 24px 110px;
+  }
+  .doc-head {
+    margin-bottom: 44px;
+    border-bottom: 1px solid var(--hair);
+    padding-bottom: 36px;
+  }
+  .doc-head .eyebrow {
+    margin-bottom: 16px;
+  }
+  .doc-head h1 {
+    font-size: clamp(34px, 6vw, 52px);
+    margin-bottom: 16px;
+  }
+  .doc-head .lead {
+    font-size: 19px;
+    color: var(--muted);
+  }
+  .doc-head .updated {
+    margin-top: 18px;
+    font-size: 14px;
+    color: var(--dim);
+  }
+
+  .tldr {
+    background: var(--card);
+    border: 1px solid var(--hair);
+    border-radius: var(--r-md);
+    padding: 28px 30px;
+    margin-bottom: 48px;
+  }
+  .tldr h2 {
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent-2);
+    margin-bottom: 16px;
+  }
+  .tldr ul {
+    list-style: none;
+    display: grid;
+    gap: 13px;
+  }
+  .tldr li {
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+    font-size: 16px;
+    color: #e2e3e6;
+  }
+  .tldr .chk {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(241, 104, 38, 0.15);
+    color: var(--accent-2);
+    display: grid;
+    place-items: center;
+    margin-top: 1px;
+  }
+  .tldr .chk svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .doc section {
+    margin-bottom: 40px;
+    scroll-margin-top: 80px;
+  }
+  .doc h2.sh {
+    font-size: 24px;
+    font-weight: 750;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+  .doc h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 22px 0 8px;
+  }
+  .doc p {
+    color: var(--muted);
+    font-size: 16.5px;
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+  .doc p :global(strong) {
+    color: var(--ink);
+    font-weight: 650;
+  }
+
+  .tbl {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0 6px;
+    font-size: 15px;
+    border: 1px solid var(--hair);
+    border-radius: var(--r-sm);
+    overflow: hidden;
+  }
+  .tbl th,
+  .tbl td {
+    text-align: left;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .tbl th {
+    background: var(--bg-3);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .tbl td:first-child {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .tbl tr:last-child td {
+    border-bottom: none;
+  }
+  .tbl .no {
+    color: var(--dim);
+  }
+
+  .callout {
+    background: var(--bg-2);
+    border: 1px solid var(--hair);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--r-sm);
+    padding: 18px 22px;
+    margin: 18px 0;
+  }
+  .callout p {
+    margin: 0;
+    font-size: 15.5px;
+    color: #d2d3d7;
+  }
+
+  .contact-card {
+    background: var(--card);
+    border: 1px solid var(--hair);
+    border-radius: var(--r-md);
+    padding: 26px 28px;
+    margin-top: 8px;
+  }
+  .contact-card a {
+    color: var(--accent-2);
+    font-weight: 600;
+  }
+  .contact-card .cc-name {
+    margin-bottom: 8px;
+  }
+  .contact-card .cc-line {
+    margin-bottom: 6px;
+  }
+  .contact-card .cc-last {
+    margin: 0;
+  }
+
+  footer {
+    border-top: 1px solid var(--hair);
+    padding-block: 36px;
+  }
+  .foot-row {
+    max-width: 760px;
+    margin-inline: auto;
+    padding-inline: 24px;
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    color: var(--dim);
+    font-size: 13px;
+  }
+  .foot-row a {
+    color: var(--muted);
+  }
+
+  @media print {
+    .nav,
+    footer .foot-row a {
+      display: none;
+    }
+    body {
+      background: #fff;
+      color: #111;
+    }
+  }
+</style>

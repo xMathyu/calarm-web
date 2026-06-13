@@ -1,0 +1,6 @@
+# pnpm 11 reads project settings from here (not .npmrc / package.json#pnpm).
+# Allow the image toolchain's install scripts so the build isn't blocked by
+# pnpm's "ignored build scripts" guard. sharp/esbuild ship prebuilt binaries.
+allowBuilds:
+  esbuild: true
+  sharp: true

@@ -1,0 +1,97 @@
+---
+import { Image } from 'astro:assets';
+import appIcon from '../assets/images/app-icon.png';
+import LangToggle from './LangToggle.astro';
+import { useTranslations } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  homeHref: string;
+  policyHref: string;
+  esHref: string;
+  enHref: string;
+}
+const { lang, homeHref, policyHref, esHref, enHref } = Astro.props;
+const t = useTranslations(lang);
+const APP_STORE = 'https://apps.apple.com/pe/app/calarm-smart-alarms/id6772419323';
+---
+
+<nav class="nav" id="nav">
+  <div class="wrap row">
+    <a href={homeHref} class="brand">
+      <Image src={appIcon} alt="Calarm" width={68} height={68} loading="eager" /> Calarm
+    </a>
+    <div class="nav-links">
+      <a href="#features">{t('nav.features')}</a>
+      <a href="#privacy">{t('nav.privacy')}</a>
+      <a href={policyHref}>{t('nav.policy')}</a>
+    </div>
+    <div class="spacer"></div>
+    <LangToggle lang={lang} esHref={esHref} enHref={enHref} />
+    <a class="btn btn-primary nav-cta" href={APP_STORE} target="_blank" rel="noopener">{t('nav.get')}</a>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s;
+    border-bottom: 1px solid transparent;
+  }
+  .nav.scrolled {
+    background: rgba(8, 9, 12, 0.72);
+    backdrop-filter: blur(18px) saturate(160%);
+    border-bottom-color: var(--hair);
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    height: 68px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-weight: 750;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+  }
+  .brand :global(img) {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    box-shadow: 0 4px 14px -4px rgba(241, 104, 38, 0.5);
+  }
+  .nav-links {
+    display: flex;
+    gap: 26px;
+    margin-left: 14px;
+  }
+  .nav-links a {
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 550;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover {
+    color: var(--ink);
+  }
+  .spacer {
+    flex: 1;
+  }
+  .nav-cta {
+    padding: 11px 20px;
+    font-size: 15px;
+  }
+  @media (max-width: 920px) {
+    .nav-links {
+      display: none;
+    }
+  }
+</style>

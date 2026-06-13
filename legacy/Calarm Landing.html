@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Calarm — Alarmas para lo que de verdad importa</title>
+<meta name="description" content="Calarm convierte tus fechas importantes en alarmas que suenan aunque tu iPhone esté en silencio, bloqueado o en Focus."/>
+<link rel="stylesheet" href="assets/calarm.css"/>
+<style>
+/* ---------- page-specific ---------- */
+.nav{
+  position:fixed; top:0; left:0; right:0; z-index:50;
+  transition:background .3s ease, border-color .3s ease, backdrop-filter .3s;
+  border-bottom:1px solid transparent;
+}
+.nav.scrolled{ background:rgba(8,9,12,.72); backdrop-filter:blur(18px) saturate(160%); border-bottom-color:var(--hair); }
+.nav .row{ display:flex; align-items:center; gap:22px; height:68px; }
+.brand{ display:flex; align-items:center; gap:11px; font-weight:750; font-size:20px; letter-spacing:-.02em; }
+.brand img{ width:34px; height:34px; border-radius:9px; box-shadow:0 4px 14px -4px rgba(241,104,38,.5); }
+.nav-links{ display:flex; gap:26px; margin-left:14px; }
+.nav-links a{ font-size:15px; color:var(--muted); font-weight:550; transition:color .2s; }
+.nav-links a:hover{ color:var(--ink); }
+.nav .spacer{ flex:1; }
+
+/* language toggle */
+.lang{ display:inline-flex; background:var(--card); border:1px solid var(--hair); border-radius:999px; padding:3px; }
+.lang button{
+  border:none; background:transparent; color:var(--dim); font-family:var(--font);
+  font-weight:650; font-size:13px; padding:6px 13px; border-radius:999px; cursor:pointer; transition:.2s;
+}
+.lang button.on{ background:var(--grad); color:#1a0c04; }
+
+/* hero */
+.hero{ padding-top:130px; position:relative; overflow:hidden; }
+.hero::before{ content:""; position:absolute; top:-12%; left:50%; transform:translateX(-50%);
+  width:130%; height:680px; z-index:-1;
+  background:radial-gradient(50% 60% at 50% 0%, rgba(241,104,38,.18), transparent 70%); }
+.hero-grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center; }
+.hero h1{ font-size:clamp(40px,6.2vw,76px); font-weight:850; margin:18px 0 22px; }
+.hero .sub{ font-size:clamp(17px,2vw,21px); color:var(--muted); max-width:33ch; margin-bottom:30px; }
+.hero-cta{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.hero .fineprint{ margin-top:18px; font-size:14px; color:var(--dim); display:flex; gap:18px; flex-wrap:wrap; }
+.hero .fineprint span{ display:inline-flex; align-items:center; gap:7px; }
+.hero .fineprint .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); }
+.hero-visual{ position:relative; display:flex; justify-content:center; }
+.hero-visual .iphone{ --ip-w:330px; transform:rotate(2.2deg); }
+
+/* trust strip */
+.trust{ border-block:1px solid var(--hair); background:var(--bg-2); }
+.trust .row{ display:flex; flex-wrap:wrap; justify-content:center; gap:14px 40px; padding-block:26px; }
+.trust .item{ display:flex; align-items:center; gap:10px; color:var(--muted); font-size:15px; font-weight:550; }
+.trust .item svg{ width:20px; height:20px; color:var(--accent-2); flex:none; }
+
+/* feature grid */
+.feat-head{ text-align:center; max-width:680px; margin:0 auto 56px; }
+.feat-head h2{ font-size:clamp(30px,4.4vw,50px); margin-bottom:16px; }
+.feat-head p{ color:var(--muted); font-size:19px; }
+.grid6{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.fcard{
+  background:var(--card); border:1px solid var(--hair); border-radius:var(--r-md);
+  padding:28px 26px 30px; transition:border-color .25s, transform .25s, background .25s;
+}
+.fcard:hover{ border-color:var(--hair-2); transform:translateY(-4px); background:var(--card-2); }
+.fcard .ic{
+  width:50px; height:50px; border-radius:13px; display:grid; place-items:center; margin-bottom:18px;
+  background:rgba(241,104,38,.13); color:var(--accent-2);
+}
+.fcard .ic svg{ width:26px; height:26px; }
+.fcard h3{ font-size:19px; font-weight:700; margin-bottom:8px; }
+.fcard p{ color:var(--muted); font-size:15px; line-height:1.55; }
+.fcard.pink .ic{ background:rgba(225,69,106,.14); color:#ff6f94; }
+.fcard.blue .ic{ background:rgba(63,125,240,.15); color:#7aa2ff; }
+
+/* showcase rows */
+.show{ display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; margin-bottom:clamp(70px,9vw,120px); }
+.show:last-child{ margin-bottom:0; }
+.show.rev .copy{ order:2; }
+.show .copy .eyebrow{ margin-bottom:16px; }
+.show .copy h2{ font-size:clamp(28px,3.6vw,42px); margin-bottom:18px; }
+.show .copy p{ color:var(--muted); font-size:18px; max-width:42ch; margin-bottom:24px; }
+.show .pts{ display:flex; flex-direction:column; gap:14px; }
+.show .pts li{ list-style:none; display:flex; gap:13px; align-items:flex-start; color:#d7d8dc; font-size:16px; }
+.show .pts .chk{ flex:none; width:24px; height:24px; border-radius:50%; background:rgba(241,104,38,.14);
+  color:var(--accent-2); display:grid; place-items:center; margin-top:1px; }
+.show .pts .chk svg{ width:14px; height:14px; }
+.show .stage{ display:flex; justify-content:center; position:relative; }
+.show .stage .iphone{ --ip-w:300px; }
+
+/* go-button callout (overlay tag) */
+.tag{
+  position:absolute; z-index:4; background:var(--grad); color:#1a0c04; font-weight:700; font-size:13px;
+  padding:9px 14px; border-radius:12px; box-shadow:0 12px 30px -8px rgba(241,104,38,.6);
+  display:flex; align-items:center; gap:7px;
+}
+.tag svg{ width:15px; height:15px; }
+
+/* meetings band */
+.meet{ background:linear-gradient(180deg,var(--bg-2),var(--bg)); border-block:1px solid var(--hair); }
+.meet-grid{ display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; }
+.meet h2{ font-size:clamp(28px,3.8vw,44px); margin-bottom:18px; }
+.meet p{ color:var(--muted); font-size:18px; max-width:44ch; margin-bottom:28px; }
+.chips{ display:flex; flex-wrap:wrap; gap:12px; }
+.chip{ display:flex; align-items:center; gap:9px; background:var(--card); border:1px solid var(--hair);
+  border-radius:999px; padding:10px 18px; font-weight:600; font-size:15px; }
+.chip .d{ width:9px; height:9px; border-radius:50%; }
+.meet-visual{ display:grid; gap:16px; }
+.meet-card{ background:var(--card); border:1px solid var(--hair); border-radius:var(--r-md); padding:22px 24px;
+  display:flex; align-items:center; gap:18px; }
+.meet-card .mi{ width:46px; height:46px; border-radius:12px; display:grid; place-items:center; flex:none; }
+.meet-card h4{ font-size:17px; font-weight:700; }
+.meet-card p{ font-size:14px; color:var(--muted); margin:0; }
+.meet-card .join{ margin-left:auto; background:var(--grad); color:#1a0c04; font-weight:700; font-size:14px;
+  padding:9px 16px; border-radius:999px; flex:none; }
+
+/* privacy band */
+.priv{ text-align:center; }
+.priv .lockwrap{ width:74px; height:74px; border-radius:20px; background:rgba(241,104,38,.13);
+  color:var(--accent-2); display:grid; place-items:center; margin:0 auto 26px; }
+.priv .lockwrap svg{ width:38px; height:38px; }
+.priv h2{ font-size:clamp(28px,4vw,46px); margin-bottom:18px; max-width:16ch; margin-inline:auto; }
+.priv > .wrap > p{ color:var(--muted); font-size:19px; max-width:52ch; margin:0 auto 44px; }
+.priv-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; text-align:left; }
+.priv-card{ background:var(--card); border:1px solid var(--hair); border-radius:var(--r-md); padding:26px; }
+.priv-card .ic{ width:42px; height:42px; border-radius:11px; background:var(--bg-3); display:grid; place-items:center;
+  color:var(--accent-2); margin-bottom:16px; }
+.priv-card .ic svg{ width:22px; height:22px; }
+.priv-card h3{ font-size:17px; margin-bottom:7px; }
+.priv-card p{ color:var(--muted); font-size:14px; line-height:1.55; }
+
+/* final cta */
+.final{ position:relative; overflow:hidden; }
+.final::before{ content:""; position:absolute; inset:0; z-index:-1;
+  background:radial-gradient(60% 80% at 50% 100%, rgba(241,104,38,.20), transparent 70%); }
+.final .box{ background:linear-gradient(180deg,var(--card),var(--bg-2)); border:1px solid var(--hair);
+  border-radius:var(--r-xl); padding:clamp(48px,7vw,84px) 40px; text-align:center; }
+.final .box img.icon{ width:84px; height:84px; border-radius:21px; margin:0 auto 26px;
+  box-shadow:0 16px 40px -12px rgba(241,104,38,.6); }
+.final h2{ font-size:clamp(32px,5vw,56px); margin-bottom:18px; }
+.final p{ color:var(--muted); font-size:20px; margin-bottom:34px; }
+.final .hero-cta{ justify-content:center; }
+
+/* footer */
+footer{ border-top:1px solid var(--hair); padding-block:54px 40px; }
+.foot-grid{ display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; align-items:flex-start; }
+.foot-brand{ max-width:320px; }
+.foot-brand .brand{ margin-bottom:14px; }
+.foot-brand p{ color:var(--dim); font-size:14px; }
+.foot-cols{ display:flex; gap:64px; flex-wrap:wrap; }
+.foot-col h5{ font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--dim); margin-bottom:14px; font-weight:650; }
+.foot-col a{ display:block; color:var(--muted); font-size:15px; margin-bottom:10px; transition:color .2s; }
+.foot-col a:hover{ color:var(--ink); }
+.foot-bottom{ margin-top:40px; padding-top:24px; border-top:1px solid var(--hair); display:flex; justify-content:space-between;
+  flex-wrap:wrap; gap:12px; color:var(--dim); font-size:13px; }
+
+@media (max-width:920px){
+  .hero-grid{ grid-template-columns:1fr; gap:30px; text-align:center; }
+  .hero .sub{ margin-inline:auto; }
+  .hero-cta{ justify-content:center; }
+  .hero .fineprint{ justify-content:center; }
+  .hero-visual{ order:-1; }
+  .grid6{ grid-template-columns:repeat(2,1fr); }
+  .show, .meet-grid{ grid-template-columns:1fr; gap:36px; }
+  .show.rev .copy{ order:0; }
+  .show .copy{ text-align:center; }
+  .show .copy p{ margin-inline:auto; }
+  .show .pts{ max-width:380px; margin-inline:auto; text-align:left; }
+  .priv-grid{ grid-template-columns:1fr; }
+  .nav-links{ display:none; }
+}
+@media (max-width:560px){
+  .grid6{ grid-template-columns:1fr; }
+  .hero-visual .iphone{ --ip-w:265px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<nav class="nav" id="nav">
+  <div class="wrap row">
+    <a href="#top" class="brand"><img src="assets/app-icon.png" alt="Calarm"/>Calarm</a>
+    <div class="nav-links">
+      <a href="#features" data-t="nav_features">Funciones</a>
+      <a href="#privacy" data-t="nav_privacy">Privacidad</a>
+      <a href="Calarm Privacy.html" data-t="nav_policy">Política</a>
+    </div>
+    <div class="spacer"></div>
+    <div class="lang" id="lang">
+      <button data-lang="es" class="on">ES</button>
+      <button data-lang="en">EN</button>
+    </div>
+    <a class="btn btn-primary" style="padding:11px 20px;font-size:15px" href="https://apps.apple.com/pe/app/calarm-smart-alarms/id6772419323" target="_blank" rel="noopener" data-t="nav_get">Descargar</a>
+  </div>
+</nav>
+
+<span id="top"></span>
+
+<!-- ================= HERO ================= -->
+<header class="hero sec-pad">
+  <div class="wrap hero-grid">
+    <div class="reveal in">
+      <span class="eyebrow" data-t="hero_eyebrow">Hecho para iOS 26</span>
+      <h1><span data-t="hero_h1a">Alarmas para</span><br/><span class="grad" data-t="hero_h1b">lo que de verdad importa</span></h1>
+      <p class="sub" data-t="hero_sub">Cumpleaños, aniversarios, medicinas y eventos del calendario. Suenan fuerte aunque tu iPhone esté en silencio, bloqueado o en Focus.</p>
+      <div class="hero-cta">
+        <a class="store-btn" href="https://apps.apple.com/pe/app/calarm-smart-alarms/id6772419323" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 1.6c.1 1-.3 2-1 2.8-.7.8-1.8 1.4-2.8 1.3-.1-1 .4-2 1-2.7.7-.8 1.9-1.4 2.8-1.4ZM19.9 17c-.5 1.2-.8 1.7-1.4 2.8-1 1.5-2.3 3.4-4 3.4-1.5 0-1.9-1-3.9-1-2 0-2.5 1-4 1-1.6 0-2.9-1.7-3.8-3.2-2.6-4-2.9-8.8-1.3-11.3C2.7 6.6 4.4 5.5 6 5.5c1.6 0 2.6 1 3.9 1 1.3 0 2-1 3.9-1 1.4 0 2.9.8 4 2.1-3.5 1.9-2.9 6.9.1 9.4Z"/></svg>
+          <span><span class="l1" data-t="store_l1">Descargar en</span><br/><span class="l2">App Store</span></span>
+        </a>
+        <a class="btn btn-ghost" href="#features" data-t="hero_explore">Ver funciones</a>
+      </div>
+      <div class="fineprint">
+        <span><span class="dot"></span><span data-t="hero_f1">Gratis</span></span>
+        <span><span class="dot"></span><span data-t="hero_f2">Sin anuncios</span></span>
+        <span><span class="dot"></span><span data-t="hero_f3">Sin tracking</span></span>
+      </div>
+    </div>
+    <div class="hero-visual reveal in">
+      <div class="iphone">
+        <div class="glow"></div>
+        <div class="island"></div>
+        <div class="screen"><img src="assets/raw-4.png" alt="Calarm — pantalla de alarmas"/></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= TRUST ================= -->
+<section class="trust">
+  <div class="wrap row">
+    <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span data-t="trust1">Suena en silencio y en Focus</span></div>
+    <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke-linecap="round"/></svg><span data-t="trust2">Privado en tu dispositivo</span></div>
+    <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18" stroke-linecap="round"/></svg><span data-t="trust3">Español e Inglés</span></div>
+    <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" stroke-linejoin="round"/></svg><span data-t="trust4">Sin servidor, sin cuentas</span></div>
+  </div>
+</section>
+
+<!-- ================= FEATURES GRID ================= -->
+<section class="sec-pad" id="features">
+  <div class="wrap">
+    <div class="feat-head reveal">
+      <h2><span data-t="feat_h2a">Todo lo que el Reloj</span> <span class="grad" data-t="feat_h2b">no hace</span></h2>
+      <p data-t="feat_p">Calarm fue diseñada para los eventos de la vida real — no solo para despertarte.</p>
+    </div>
+    <div class="grid6">
+      <div class="fcard reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.7 21a2 2 0 0 1-3.4 0" stroke-linecap="round"/></svg></div>
+        <h3 data-t="g1_h">Suena aunque esté en silencio</h3>
+        <p data-t="g1_p">Usa AlarmKit del sistema: la alarma suena fuerte con el iPhone bloqueado, en silencio o en modo Focus.</p>
+      </div>
+      <div class="fcard reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 11V9a4 4 0 0 1 4-4h14" stroke-linecap="round"/><path d="M7 23l-4-4 4-4" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 13v2a4 4 0 0 1-4 4H3" stroke-linecap="round"/></svg></div>
+        <h3 data-t="g2_h">Recurrencias avanzadas</h3>
+        <p data-t="g2_p">Cada N días, semanas, meses o años. Lunes y miércoles, cada 2 semanas, una fecha exacta cada año.</p>
+      </div>
+      <div class="fcard reveal blue">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/></svg></div>
+        <h3 data-t="g3_h">Eventos del calendario</h3>
+        <p data-t="g3_p">Lee tu Calendario de Apple y configura hasta 3 avisos por evento: al inicio, 15 min antes, 1 hora antes.</p>
+      </div>
+      <div class="fcard reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17h14l-1.5-5.5a2 2 0 0 0-2-1.5h-7a2 2 0 0 0-2 1.5L5 17Z" stroke-linejoin="round"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg></div>
+        <h3 data-t="g4_h">Botón "Ir" al manejar</h3>
+        <p data-t="g4_p">Si el evento tiene ubicación, la alarma muestra un botón Ir que la detiene y abre Maps con direcciones.</p>
+      </div>
+      <div class="fcard reveal blue">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 9h18M8 13h5" stroke-linecap="round"/><circle cx="16" cy="13.5" r="1"/></svg></div>
+        <h3 data-t="g5_h">Reuniones de Teams, Zoom y Meet</h3>
+        <p data-t="g5_p">Detecta el enlace de la reunión en tu evento y muestra un botón Unirse que abre la app correcta.</p>
+      </div>
+      <div class="fcard reveal pink">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20v-1a4 4 0 0 1 4-4h2M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><circle cx="9" cy="8" r="3"/><path d="M14 20v-1a4 4 0 0 1 4-4h0a4 4 0 0 1 4 4v1" stroke-linecap="round"/></svg></div>
+        <h3 data-t="g6_h">Foto, icono y compartir</h3>
+        <p data-t="g6_p">Ponle la foto de un amigo a su cumpleaños, elige un emoji, y comparte tu lista con personas de confianza.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SHOWCASE ROWS ================= -->
+<section class="sec-pad" style="background:var(--bg-2);border-block:1px solid var(--hair)">
+  <div class="wrap">
+
+    <!-- birthdays -->
+    <div class="show reveal">
+      <div class="copy">
+        <span class="eyebrow" data-t="s1_ey">Cumpleaños y aniversarios</span>
+        <h2 data-t="s1_h">Una vez. Y suena cada año.</h2>
+        <p data-t="s1_p">Programa el cumpleaños de un amigo con su foto y se repite automáticamente — sin que tengas que volver a tocarlo.</p>
+        <ul class="pts">
+          <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-t="s1_l1">Recurrencia anual automática</span></li>
+          <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-t="s1_l2">Foto o icono para cada persona</span></li>
+          <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-t="s1_l3">Categorías con color propio</span></li>
+        </ul>
+      </div>
+      <div class="stage">
+        <div class="iphone"><div class="island"></div><div class="screen"><img src="assets/raw-4.png" alt="Lista de alarmas"/></div></div>
+      </div>
+    </div>
+
+    <!-- recurrences -->
+    <div class="show rev reveal">
+      <div class="copy">
+        <span class="eyebrow" data-t="s2_ey">Recurrencias</span>
+        <h2 data-t="s2_h">El control que tú quieres.</h2>
+        <p data-t="s2_p">Elige la frecuencia, el intervalo y los días exactos. Calarm te muestra las próximas ocurrencias antes de guardar.</p>
+        <ul class="pts">
+          <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-t="s2_l1">Diaria, semanal, mensual o anual</span></li>
+          <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-t="s2_l2">Días específicos de la semana</span></li>
+          <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-t="s2_l3">Vista previa de próximas fechas</span></li>
+        </ul>
+      </div>
+      <div class="stage">
+        <div class="iphone"><div class="island"></div><div class="screen"><img src="assets/raw-3.png" alt="Pantalla de repetición"/></div></div>
+      </div>
+    </div>
+
+    <!-- calendar + go -->
+    <div class="show reveal">
+      <div class="copy">
+        <span class="eyebrow" data-t="s3_ey">Calendario · Botón Ir</span>
+        <h2 data-t="s3_h">Tus eventos también suenan.</h2>
+        <p data-t="s3_p">Activa el tab Calendario y Calarm lee tus eventos de Apple. Cuando el evento tiene ubicación, en lugar de "posponer" aparece "Ir".</p>
+        <ul class="pts">
+          <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-t="s3_l1">Hasta 3 avisos por evento</span></li>
+          <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-t="s3_l2">"Ir" detiene la alarma y abre Maps</span></li>
+          <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-t="s3_l3">Direcciones automáticas</span></li>
+        </ul>
+      </div>
+      <div class="stage">
+        <div class="tag" style="top:14%;right:6%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="s3_tag">Ir · Maps</span></div>
+        <div class="iphone"><div class="island"></div><div class="screen"><img src="assets/raw-6.png" alt="Detalle de evento"/></div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= MEETINGS ================= -->
+<section class="meet sec-pad">
+  <div class="wrap meet-grid">
+    <div class="reveal">
+      <span class="eyebrow" data-t="m_ey">Reuniones</span>
+      <h2 data-t="m_h">Un toque para unirte.</h2>
+      <p data-t="m_p">Calarm detecta automáticamente los enlaces de tus reuniones y muestra un botón que abre la app correcta — sin buscar el link.</p>
+      <div class="chips">
+        <span class="chip"><span class="d" style="background:#5b5fc7"></span>Microsoft Teams</span>
+        <span class="chip"><span class="d" style="background:#2d8cff"></span>Zoom</span>
+        <span class="chip"><span class="d" style="background:#00ac47"></span>Google Meet</span>
+      </div>
+    </div>
+    <div class="meet-visual reveal">
+      <div class="meet-card">
+        <div class="mi" style="background:rgba(91,95,199,.18);color:#9da0ff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3" stroke-linejoin="round"/></svg></div>
+        <div><h4>Team Sync</h4><p>2:00 PM · Microsoft Teams</p></div>
+        <span class="join" data-t="m_join">Unirse</span>
+      </div>
+      <div class="meet-card">
+        <div class="mi" style="background:rgba(45,140,255,.16);color:#7ab8ff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3" stroke-linejoin="round"/></svg></div>
+        <div><h4>Sprint Review</h4><p>4:30 PM · Zoom</p></div>
+        <span class="join" data-t="m_join2">Unirse</span>
+      </div>
+      <div class="meet-card">
+        <div class="mi" style="background:rgba(0,172,71,.15);color:#5fd28a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3" stroke-linejoin="round"/></svg></div>
+        <div><h4>1:1 con Ana</h4><p>9:00 AM · Google Meet</p></div>
+        <span class="join" data-t="m_join3">Unirse</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRIVACY ================= -->
+<section class="priv sec-pad" id="privacy">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="lockwrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke-linecap="round"/><circle cx="12" cy="16" r="1.3" fill="currentColor"/></svg></div>
+      <h2 data-t="p_h">Todo privado en tu dispositivo</h2>
+      <p data-t="p_p">Calarm no tiene servidor, no pide cuenta y no te rastrea. Lo que es tuyo, se queda en tu iPhone.</p>
+    </div>
+    <div class="priv-grid">
+      <div class="priv-card reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2.2"/><path d="m6 19 4.5-4 3 2.5L17 13l4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3 data-t="p1_h">Fotos</h3>
+        <p data-t="p1_p">Solo para mostrar la foto de un recordatorio que tú creaste. Se guardan localmente, nunca salen del dispositivo.</p>
+      </div>
+      <div class="priv-card reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/></svg></div>
+        <h3 data-t="p2_h">Calendario (lectura)</h3>
+        <p data-t="p2_p">Leemos tus eventos solo para programar las alarmas. No se almacenan ni se envían fuera del dispositivo.</p>
+      </div>
+      <div class="priv-card reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.4 6A11 11 0 0 0 3 12a11 11 0 0 0 .6 3.5" stroke-linecap="round"/><path d="m1 1 22 22" stroke-linecap="round"/><path d="M9.5 9.5a3 3 0 0 0 4.2 4.2" stroke-linecap="round"/></svg></div>
+        <h3 data-t="p3_h">Cero tracking</h3>
+        <p data-t="p3_p">Sin analítica de terceros, sin anuncios, sin identificadores publicitarios. Nada que recolectar.</p>
+      </div>
+    </div>
+    <p style="margin-top:30px"><a href="Calarm Privacy.html" class="btn btn-ghost" data-t="p_link" style="font-size:15px">Leer la política de privacidad</a></p>
+  </div>
+</section>
+
+<!-- ================= FINAL CTA ================= -->
+<section class="final sec-pad">
+  <div class="wrap">
+    <div class="box reveal">
+      <img class="icon" src="assets/app-icon.png" alt="Calarm"/>
+      <h2><span data-t="cta_h1">Nunca olvides</span> <span class="grad" data-t="cta_h2">lo que importa.</span></h2>
+      <p data-t="cta_p">Gratis. Privado. Hecho para iOS 26.</p>
+      <div class="hero-cta">
+        <a class="store-btn" href="https://apps.apple.com/pe/app/calarm-smart-alarms/id6772419323" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 1.6c.1 1-.3 2-1 2.8-.7.8-1.8 1.4-2.8 1.3-.1-1 .4-2 1-2.7.7-.8 1.9-1.4 2.8-1.4ZM19.9 17c-.5 1.2-.8 1.7-1.4 2.8-1 1.5-2.3 3.4-4 3.4-1.5 0-1.9-1-3.9-1-2 0-2.5 1-4 1-1.6 0-2.9-1.7-3.8-3.2-2.6-4-2.9-8.8-1.3-11.3C2.7 6.6 4.4 5.5 6 5.5c1.6 0 2.6 1 3.9 1 1.3 0 2-1 3.9-1 1.4 0 2.9.8 4 2.1-3.5 1.9-2.9 6.9.1 9.4Z"/></svg>
+          <span><span class="l1" data-t="store_l1b">Descargar en</span><br/><span class="l2">App Store</span></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top" class="brand"><img src="assets/app-icon.png" alt="Calarm"/>Calarm</a>
+        <p data-t="foot_tag">Alarmas para cumpleaños, aniversarios y eventos de la vida real. Por Mathyu Solutions.</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h5 data-t="foot_product">Producto</h5>
+          <a href="#features" data-t="foot_features">Funciones</a>
+          <a href="#privacy" data-t="foot_privacy">Privacidad</a>
+          <a href="https://apps.apple.com/pe/app/calarm-smart-alarms/id6772419323" target="_blank" rel="noopener">App Store</a>
+        </div>
+        <div class="foot-col">
+          <h5 data-t="foot_support">Soporte</h5>
+          <a href="mailto:xmathyu@gmail.com">xmathyu@gmail.com</a>
+          <a href="https://github.com/xMathyu/Calarm/issues" target="_blank" rel="noopener" data-t="foot_issues">Reportar un problema</a>
+          <a href="Calarm Privacy.html" data-t="foot_policy">Política de privacidad</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Mathyu Solutions · Calarm</span>
+      <span data-t="foot_made">Hecho para iOS 26 · Liquid Glass · AlarmKit · SwiftData</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------- i18n ---------- */
+const I18N = {
+  en:{
+    nav_features:"Features", nav_privacy:"Privacy", nav_policy:"Policy", nav_get:"Download",
+    hero_eyebrow:"Built for iOS 26",
+    hero_h1a:"Alarms for", hero_h1b:"what really matters",
+    hero_sub:"Birthdays, anniversaries, medications and calendar events. They ring loud even when your iPhone is silent, locked or in Focus.",
+    store_l1:"Download on the", store_l1b:"Download on the",
+    hero_explore:"See features",
+    hero_f1:"Free", hero_f2:"No ads", hero_f3:"No tracking",
+    trust1:"Rings on silent & Focus", trust2:"Private on your device", trust3:"English & Spanish", trust4:"No server, no accounts",
+    feat_h2a:"Everything the Clock", feat_h2b:"can't do",
+    feat_p:"Calarm was designed for real-life events — not just for waking you up.",
+    g1_h:"Rings even on silent", g1_p:"Powered by the system's AlarmKit: the alarm rings loud while your iPhone is locked, silenced or in Focus mode.",
+    g2_h:"Advanced recurrences", g2_p:"Every N days, weeks, months or years. Mondays and Wednesdays, every 2 weeks, an exact date each year.",
+    g3_h:"Calendar events", g3_p:"Reads your Apple Calendar and sets up to 3 alerts per event: at start, 15 min before, 1 hour before.",
+    g4_h:"\u201CGo\u201D button while driving", g4_p:"If the event has a location, the alarm shows a Go button that stops it and opens Maps with directions.",
+    g5_h:"Teams, Zoom & Meet meetings", g5_p:"Detects the meeting link in your event and shows a Join button that opens the right app.",
+    g6_h:"Photo, icon & sharing", g6_p:"Put a friend's photo on their birthday, pick an emoji, and share your list with trusted helpers.",
+    s1_ey:"Birthdays & anniversaries", s1_h:"Set once. Rings every year.",
+    s1_p:"Schedule a friend's birthday with their photo and it repeats automatically — you never touch it again.",
+    s1_l1:"Automatic yearly recurrence", s1_l2:"Photo or icon for each person", s1_l3:"Categories with their own color",
+    s2_ey:"Recurrences", s2_h:"The control you actually want.",
+    s2_p:"Choose the frequency, the interval and the exact days. Calarm previews the next occurrences before you save.",
+    s2_l1:"Daily, weekly, monthly or yearly", s2_l2:"Specific days of the week", s2_l3:"Preview of upcoming dates",
+    s3_ey:"Calendar · Go button", s3_h:"Your events ring too.",
+    s3_p:"Turn on the Calendar tab and Calarm reads your Apple events. When the event has a location, \u201CGo\u201D replaces \u201Csnooze.\u201D",
+    s3_l1:"Up to 3 alerts per event", s3_l2:"\u201CGo\u201D stops the alarm and opens Maps", s3_l3:"Automatic directions", s3_tag:"Go · Maps",
+    m_ey:"Meetings", m_h:"One tap to join.",
+    m_p:"Calarm automatically detects your meeting links and shows a button that opens the right app — no link hunting.",
+    m_join:"Join", m_join2:"Join", m_join3:"Join",
+    p_h:"Everything private on your device",
+    p_p:"Calarm has no server, asks for no account and never tracks you. What's yours stays on your iPhone.",
+    p1_h:"Photos", p1_p:"Only to show the photo of a reminder you created. Stored locally, they never leave the device.",
+    p2_h:"Calendar (read)", p2_p:"We read your events only to schedule alarms. Nothing is stored or sent off the device.",
+    p3_h:"Zero tracking", p3_p:"No third-party analytics, no ads, no advertising identifiers. Nothing to collect.",
+    p_link:"Read the privacy policy",
+    cta_h1:"Never forget", cta_h2:"what matters.", cta_p:"Free. Private. Built for iOS 26.",
+    foot_tag:"Alarms for birthdays, anniversaries and real-life events. By Mathyu Solutions.",
+    foot_product:"Product", foot_features:"Features", foot_privacy:"Privacy",
+    foot_support:"Support", foot_issues:"Report an issue", foot_policy:"Privacy policy",
+    foot_made:"Built for iOS 26 · Liquid Glass · AlarmKit · SwiftData"
+  }
+};
+const ES_DEFAULTS = {}; // Spanish is the in-HTML default
+function setLang(lang){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const k = el.getAttribute('data-t');
+    if(lang==='en'){ if(I18N.en[k]!==undefined){ if(!el.dataset.es) el.dataset.es = el.textContent; el.textContent = I18N.en[k]; } }
+    else { if(el.dataset.es!==undefined) el.textContent = el.dataset.es; }
+  });
+  document.querySelectorAll('#lang button').forEach(b=> b.classList.toggle('on', b.dataset.lang===lang));
+  try{ localStorage.setItem('calarm_lang', lang); }catch(e){}
+}
+document.querySelectorAll('#lang button').forEach(b=> b.addEventListener('click',()=> setLang(b.dataset.lang)));
+let saved='es'; try{ saved = localStorage.getItem('calarm_lang') || 'es'; }catch(e){}
+setLang(saved);
+
+/* ---------- nav scrolled ---------- */
+const nav=document.getElementById('nav');
+const onScroll=()=> nav.classList.toggle('scrolled', window.scrollY>20);
+onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+/* ---------- reveal on scroll ---------- */
+const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12, rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.reveal:not(.in)').forEach(el=> io.observe(el));
+</script>
+</body>
+</html>

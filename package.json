@@ -1,0 +1,19 @@
+{
+  "name": "calarm-landing",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Calarm — landing site (Astro)",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "astro": "^5.7.0",
+    "sharp": "^0.33.5"
+  }
+}

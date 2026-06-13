@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Landing from '../components/Landing.astro';
+import { useTranslations } from '../i18n/utils';
+
+const lang = 'es' as const;
+const t = useTranslations(lang);
+const site = (Astro.site ?? new URL('https://calarm.mathyusolutions.com')).origin;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'MobileApplication',
+  name: 'Calarm',
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'iOS 26',
+  description: t('site.description'),
+  url: `${site}/`,
+  image: `${site}/og-image.png`,
+  downloadUrl: 'https://apps.apple.com/pe/app/calarm-smart-alarms/id6772419323',
+  inLanguage: ['es', 'en'],
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  author: { '@type': 'Organization', name: 'Mathyu Solutions', url: site },
+  publisher: { '@type': 'Organization', name: 'Mathyu Solutions', url: site },
+};
+---
+
+<Layout
+  lang={lang}
+  title={t('site.title')}
+  description={t('site.description')}
+  path=""
+  alternates={{ es: '', en: '' }}
+  jsonLd={jsonLd}
+>
+  <Landing lang={lang} />
+</Layout>

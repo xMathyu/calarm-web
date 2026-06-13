@@ -1,0 +1,129 @@
+---
+import '../styles/global.css';
+import { type Lang } from '../i18n/ui';
+import { localizedPath } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Locale-agnostic path (e.g. '' for home, 'privacidad'/'privacy'). */
+  path?: string;
+  /** Map of locale -> locale-less path, used to build hreflang alternates. */
+  alternates?: Partial<Record<Lang, string>>;
+  ogImage?: string;
+  /** Optional JSON-LD structured data object(s). */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  lang,
+  title,
+  description,
+  path = '',
+  alternates = { es: path, en: path },
+  ogImage = '/og-image.png',
+  jsonLd,
+} = Astro.props;
+
+const site = Astro.site ?? new URL('https://calarm.mathyusolutions.com');
+
+// Canonical URL for this exact page.
+const canonical = new URL(localizedPath(lang, path), site).href;
+
+// hreflang alternates — one per available locale, plus x-default → Spanish.
+const hreflangs = (Object.entries(alternates) as [Lang, string][]).map(([l, p]) => ({
+  lang: l,
+  href: new URL(localizedPath(l, p), site).href,
+}));
+const xDefault = new URL(localizedPath('es', alternates.es ?? path), site).href;
+
+const ogImageUrl = new URL(ogImage, site).href;
+const ogLocale = lang === 'es' ? 'es_ES' : 'en_US';
+const ogLocaleAlt = lang === 'es' ? 'en_US' : 'es_ES';
+
+const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="canonical" href={canonical} />
+    {hreflangs.map((h) => <link rel="alternate" hreflang={h.lang} href={h.href} />)}
+    <link rel="alternate" hreflang="x-default" href={xDefault} />
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#060709" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Calarm" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:locale" content={ogLocale} />
+    <meta property="og:locale:alternate" content={ogLocaleAlt} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    {
+      jsonLdArray.map((data) => (
+        <script type="application/ld+json" set:html={JSON.stringify(data)} />
+      ))
+    }
+
+    <!-- No-JS fallback: reveal animations must never hide content from crawlers/users. -->
+    <noscript>
+      <style>
+        .reveal {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      </style>
+    </noscript>
+  </head>
+  <body>
+    <slot />
+
+    <script>
+      // Progressive enhancement only — all content is in the static HTML.
+      const nav = document.getElementById('nav');
+      if (nav) {
+        const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 20);
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
+
+      const reveals = document.querySelectorAll('.reveal:not(.in)');
+      if (reveals.length && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add('in');
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+        );
+        reveals.forEach((el) => io.observe(el));
+      } else {
+        reveals.forEach((el) => el.classList.add('in'));
+      }
+    </script>
+  </body>
+</html>

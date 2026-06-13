@@ -1,0 +1,115 @@
+---
+import { Image } from 'astro:assets';
+import appIcon from '../assets/images/app-icon.png';
+import { useTranslations } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  homeHref: string;
+  policyHref: string;
+}
+const { lang, homeHref, policyHref } = Astro.props;
+const t = useTranslations(lang);
+const APP_STORE = 'https://apps.apple.com/pe/app/calarm-smart-alarms/id6772419323';
+---
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href={homeHref} class="brand">
+          <Image src={appIcon} alt="Calarm" width={68} height={68} /> Calarm
+        </a>
+        <p>{t('foot.tag')}</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h5>{t('foot.product')}</h5>
+          <a href="#features">{t('foot.features')}</a>
+          <a href="#privacy">{t('foot.privacy')}</a>
+          <a href={APP_STORE} target="_blank" rel="noopener">App Store</a>
+        </div>
+        <div class="foot-col">
+          <h5>{t('foot.support')}</h5>
+          <a href="mailto:xmathyu@gmail.com">xmathyu@gmail.com</a>
+          <a href="https://github.com/xMathyu/Calarm/issues" target="_blank" rel="noopener">{t('foot.issues')}</a>
+          <a href={policyHref}>{t('foot.policy')}</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Mathyu Solutions · Calarm</span>
+      <span>{t('foot.made')}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--hair);
+    padding-block: 54px 40px;
+  }
+  .foot-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .foot-brand {
+    max-width: 320px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-weight: 750;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .brand :global(img) {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+  .foot-brand p {
+    color: var(--dim);
+    font-size: 14px;
+  }
+  .foot-cols {
+    display: flex;
+    gap: 64px;
+    flex-wrap: wrap;
+  }
+  .foot-col h5 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--dim);
+    margin-bottom: 14px;
+    font-weight: 650;
+  }
+  .foot-col a {
+    display: block;
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 10px;
+    transition: color 0.2s;
+  }
+  .foot-col a:hover {
+    color: var(--ink);
+  }
+  .foot-bottom {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hair);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    color: var(--dim);
+    font-size: 13px;
+  }
+</style>

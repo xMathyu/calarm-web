@@ -1,0 +1,28 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  img: ImageMetadata;
+  alt: string;
+  /** CSS display width of the frame, in px. */
+  width?: number;
+  glow?: boolean;
+  eager?: boolean;
+}
+const { img, alt, width = 300, glow = false, eager = false } = Astro.props;
+---
+
+<div class="iphone" style={`--ip-w:${width}px`}>
+  {glow && <div class="glow"></div>}
+  <div class="island"></div>
+  <div class="screen">
+    <Image
+      src={img}
+      alt={alt}
+      width={660}
+      height={1431}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : 'auto'}
+    />
+  </div>
+</div>

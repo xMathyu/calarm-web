@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Calarm — Política de Privacidad</title>
+<meta name="description" content="Política de privacidad de Calarm. Sin servidor, sin cuentas, sin tracking. Tus datos se quedan en tu dispositivo."/>
+<link rel="stylesheet" href="assets/calarm.css"/>
+<style>
+.nav{ position:sticky; top:0; z-index:50; background:rgba(8,9,12,.78); backdrop-filter:blur(18px) saturate(160%); border-bottom:1px solid var(--hair); }
+.nav .row{ display:flex; align-items:center; gap:18px; height:64px; }
+.brand{ display:flex; align-items:center; gap:11px; font-weight:750; font-size:19px; letter-spacing:-.02em; }
+.brand img{ width:32px; height:32px; border-radius:9px; }
+.nav .spacer{ flex:1; }
+.back{ font-size:15px; color:var(--muted); font-weight:550; display:inline-flex; align-items:center; gap:7px; transition:color .2s; }
+.back:hover{ color:var(--ink); }
+.back svg{ width:16px; height:16px; }
+.lang{ display:inline-flex; background:var(--card); border:1px solid var(--hair); border-radius:999px; padding:3px; }
+.lang button{ border:none; background:transparent; color:var(--dim); font-family:var(--font); font-weight:650; font-size:13px; padding:6px 13px; border-radius:999px; cursor:pointer; transition:.2s; }
+.lang button.on{ background:var(--grad); color:#1a0c04; }
+
+.doc{ max-width:760px; margin-inline:auto; padding:64px 24px 110px; }
+.doc-head{ margin-bottom:44px; border-bottom:1px solid var(--hair); padding-bottom:36px; }
+.doc-head .eyebrow{ margin-bottom:16px; }
+.doc-head h1{ font-size:clamp(34px,6vw,52px); margin-bottom:16px; }
+.doc-head .lead{ font-size:19px; color:var(--muted); }
+.doc-head .updated{ margin-top:18px; font-size:14px; color:var(--dim); }
+
+.tldr{ background:var(--card); border:1px solid var(--hair); border-radius:var(--r-md); padding:28px 30px; margin-bottom:48px; }
+.tldr h2{ font-size:15px; text-transform:uppercase; letter-spacing:.06em; color:var(--accent-2); margin-bottom:16px; }
+.tldr ul{ list-style:none; display:grid; gap:13px; }
+.tldr li{ display:flex; gap:13px; align-items:flex-start; font-size:16px; color:#e2e3e6; }
+.tldr .chk{ flex:none; width:24px; height:24px; border-radius:50%; background:rgba(241,104,38,.15); color:var(--accent-2); display:grid; place-items:center; margin-top:1px; }
+.tldr .chk svg{ width:14px; height:14px; }
+
+.doc section{ margin-bottom:40px; scroll-margin-top:80px; }
+.doc h2.sh{ font-size:24px; font-weight:750; margin-bottom:14px; letter-spacing:-.01em; }
+.doc h3{ font-size:17px; font-weight:700; margin:22px 0 8px; }
+.doc p{ color:var(--muted); font-size:16.5px; line-height:1.7; margin-bottom:14px; }
+.doc p strong{ color:var(--ink); font-weight:650; }
+.doc a.inline{ color:var(--accent-2); text-decoration:underline; text-underline-offset:3px; }
+
+.tbl{ width:100%; border-collapse:collapse; margin:18px 0 6px; font-size:15px; border:1px solid var(--hair); border-radius:var(--r-sm); overflow:hidden; }
+.tbl th, .tbl td{ text-align:left; padding:13px 16px; border-bottom:1px solid var(--hair); }
+.tbl th{ background:var(--bg-3); color:var(--muted); font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:.04em; }
+.tbl td:first-child{ color:var(--ink); font-weight:600; }
+.tbl tr:last-child td{ border-bottom:none; }
+.tbl .yes{ color:var(--accent-2); font-weight:650; }
+.tbl .no{ color:var(--dim); }
+
+.callout{ background:var(--bg-2); border:1px solid var(--hair); border-left:3px solid var(--accent); border-radius:var(--r-sm); padding:18px 22px; margin:18px 0; }
+.callout p{ margin:0; font-size:15.5px; color:#d2d3d7; }
+
+.contact-card{ background:var(--card); border:1px solid var(--hair); border-radius:var(--r-md); padding:26px 28px; margin-top:8px; }
+.contact-card a{ color:var(--accent-2); font-weight:600; }
+
+footer{ border-top:1px solid var(--hair); padding-block:36px; }
+.foot-row{ max-width:760px; margin-inline:auto; padding-inline:24px; display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; color:var(--dim); font-size:13px; }
+.foot-row a{ color:var(--muted); }
+
+@media print{
+  .nav, footer .foot-row a{ display:none; }
+  body{ background:#fff; color:#111; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap row">
+    <a href="Calarm Landing.html" class="brand"><img src="assets/app-icon.png" alt="Calarm"/>Calarm</a>
+    <div class="spacer"></div>
+    <div class="lang" id="lang">
+      <button data-lang="es" class="on">ES</button>
+      <button data-lang="en">EN</button>
+    </div>
+    <a href="Calarm Landing.html" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="back">Volver al sitio</span></a>
+  </div>
+</nav>
+
+<main class="doc">
+  <div class="doc-head">
+    <span class="eyebrow" data-t="ey">Calarm · Mathyu Solutions</span>
+    <h1 data-t="title">Política de Privacidad</h1>
+    <p class="lead" data-t="lead">Calarm está diseñada para funcionar por completo en tu dispositivo. No tenemos servidor, no pedimos cuenta y no te rastreamos.</p>
+    <p class="updated" data-t="updated">Última actualización: 12 de junio de 2026</p>
+  </div>
+
+  <div class="tldr">
+    <h2 data-t="tldr_h">En resumen</h2>
+    <ul>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-t="tldr1">No recolectamos ni vendemos tus datos personales.</span></li>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-t="tldr2">Sin servidor, sin cuentas y sin inicio de sesión.</span></li>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-t="tldr3">Sin anuncios, sin analítica de terceros y sin identificadores publicitarios.</span></li>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span data-t="tldr4">Tus alarmas, fotos y eventos se quedan en tu iPhone.</span></li>
+    </ul>
+  </div>
+
+  <section id="access">
+    <h2 class="sh" data-t="s1_h">1. A qué accede Calarm</h2>
+    <p data-t="s1_p">Para que la app funcione, Calarm puede pedirte permiso para acceder a lo siguiente. Tú lo autorizas y puedes revocarlo en cualquier momento desde Ajustes de iOS.</p>
+
+    <h3 data-t="s1a_h">Fotos</h3>
+    <p data-t="s1a_p">Si eliges una foto para un recordatorio (por ejemplo, la foto de un amigo en su cumpleaños), Calarm guarda esa imagen <strong>localmente en tu dispositivo</strong> para mostrarla cuando suene la alarma. Las fotos nunca se suben a ningún servidor.</p>
+
+    <h3 data-t="s1b_h">Calendario (solo lectura)</h3>
+    <p data-t="s1b_p">Si activas el tab Calendario, Calarm <strong>lee</strong> los eventos de la app Calendario de Apple para programar las alarmas y detectar enlaces de reuniones (Teams, Zoom, Google Meet) y ubicaciones. No modificamos tus eventos y no los almacenamos ni enviamos fuera del dispositivo.</p>
+
+    <h3 data-t="s1c_h">Alarmas y notificaciones (AlarmKit)</h3>
+    <p data-t="s1c_p">Calarm usa AlarmKit del sistema para que tus alarmas suenen aunque el iPhone esté en silencio, bloqueado o en modo Focus. Esta programación ocurre por completo en tu dispositivo a través de las APIs de Apple.</p>
+  </section>
+
+  <section id="practices">
+    <h2 class="sh" data-t="s2_h">2. Resumen de prácticas de datos</h2>
+    <p data-t="s2_p">Esta tabla corresponde a la sección "Privacidad de la app" en App Store Connect.</p>
+    <table class="tbl">
+      <thead>
+        <tr><th data-t="th1">Tipo de dato</th><th data-t="th2">Uso</th><th data-t="th3">Vinculado a ti</th><th data-t="th4">Tracking</th></tr>
+      </thead>
+      <tbody>
+        <tr><td data-t="r1c1">Fotos (contenido del usuario)</td><td data-t="r1c2">Mostrar la foto de un recordatorio. Guardadas localmente.</td><td class="no" data-t="no1">No</td><td class="no" data-t="no2">No</td></tr>
+        <tr><td data-t="r2c1">Eventos de calendario (lectura)</td><td data-t="r2c2">Detectar eventos y reuniones para programar alarmas. No se almacenan fuera del dispositivo.</td><td class="no" data-t="no3">No</td><td class="no" data-t="no4">No</td></tr>
+        <tr><td data-t="r3c1">Identificadores, ubicación, contactos, uso, diagnósticos</td><td class="no" data-t="r3c2">No se recolectan</td><td class="no" data-t="no5">No</td><td class="no" data-t="no6">No</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="storage">
+    <h2 class="sh" data-t="s3_h">3. Almacenamiento y seguridad</h2>
+    <p data-t="s3_p">Toda tu información (alarmas, recordatorios, categorías, fotos y preferencias) se guarda localmente usando SwiftData en tu dispositivo. Como no hay servidor, no existe una base de datos central que pueda ser vulnerada.</p>
+    <div class="callout">
+      <p data-t="s3_callout">Cuando agreguemos sincronización con iCloud, tu contenido se almacenará en tu base de datos privada de iCloud (Apple), cifrada de extremo a extremo. Actualizaremos esta política antes de habilitar esa función.</p>
+    </div>
+  </section>
+
+  <section id="sharing">
+    <h2 class="sh" data-t="s4_h">4. Compartir con personas de confianza</h2>
+    <p data-t="s4_p">Si usas la función para compartir tu lista de alarmas con una persona de confianza, esos datos se comparten mediante los servicios de Apple que tú autorizas. Calarm no actúa como intermediario ni guarda copias en ningún servidor propio.</p>
+  </section>
+
+  <section id="children">
+    <h2 class="sh" data-t="s5_h">5. Menores de edad</h2>
+    <p data-t="s5_p">Calarm tiene clasificación 4+ y es apta para todas las edades. No recolectamos conscientemente datos personales de nadie, incluidos los menores.</p>
+  </section>
+
+  <section id="changes">
+    <h2 class="sh" data-t="s6_h">6. Cambios a esta política</h2>
+    <p data-t="s6_p">Si actualizamos esta política, cambiaremos la fecha de "Última actualización" y, cuando el cambio sea importante (por ejemplo, sincronización con iCloud), te lo avisaremos dentro de la app.</p>
+  </section>
+
+  <section id="contact">
+    <h2 class="sh" data-t="s7_h">7. Contacto</h2>
+    <p data-t="s7_p">¿Tienes preguntas sobre tu privacidad o esta política? Escríbenos:</p>
+    <div class="contact-card">
+      <p style="margin-bottom:8px"><strong>Mathyu Solutions</strong></p>
+      <p style="margin-bottom:6px"><a href="mailto:xmathyu@gmail.com">xmathyu@gmail.com</a></p>
+      <p style="margin:0"><a href="https://github.com/xMathyu/Calarm/issues" target="_blank" rel="noopener">github.com/xMathyu/Calarm/issues</a></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot-row">
+    <span>© 2026 Mathyu Solutions · Calarm</span>
+    <a href="Calarm Landing.html" data-t="foot_back">calarm.mathyusolutions.com</a>
+  </div>
+</footer>
+
+<script>
+const I18N = { en:{
+  back:"Back to site",
+  ey:"Calarm · Mathyu Solutions",
+  title:"Privacy Policy",
+  lead:"Calarm is designed to run entirely on your device. We have no server, ask for no account and never track you.",
+  updated:"Last updated: June 12, 2026",
+  tldr_h:"In short",
+  tldr1:"We don't collect or sell your personal data.",
+  tldr2:"No server, no accounts and no sign-in.",
+  tldr3:"No ads, no third-party analytics and no advertising identifiers.",
+  tldr4:"Your alarms, photos and events stay on your iPhone.",
+  s1_h:"1. What Calarm accesses",
+  s1_p:"For the app to work, Calarm may ask permission to access the following. You grant it, and you can revoke it anytime from iOS Settings.",
+  s1a_h:"Photos",
+  s1a_p:"If you pick a photo for a reminder (for example, a friend's photo on their birthday), Calarm stores that image <strong>locally on your device</strong> to show it when the alarm rings. Photos are never uploaded to any server.",
+  s1b_h:"Calendar (read only)",
+  s1b_p:"If you enable the Calendar tab, Calarm <strong>reads</strong> events from Apple's Calendar app to schedule alarms and detect meeting links (Teams, Zoom, Google Meet) and locations. We don't modify your events and don't store or send them off the device.",
+  s1c_h:"Alarms & notifications (AlarmKit)",
+  s1c_p:"Calarm uses the system's AlarmKit so your alarms ring even when the iPhone is silent, locked or in Focus mode. This scheduling happens entirely on your device through Apple's APIs.",
+  s2_h:"2. Data practices summary",
+  s2_p:"This table maps to the \u201CApp Privacy\u201D section in App Store Connect.",
+  th1:"Data type", th2:"Use", th3:"Linked to you", th4:"Tracking",
+  r1c1:"Photos (user content)", r1c2:"Show a reminder's photo. Stored locally.",
+  r2c1:"Calendar events (read)", r2c2:"Detect events and meetings to schedule alarms. Not stored off-device.",
+  r3c1:"Identifiers, location, contacts, usage, diagnostics", r3c2:"Not collected",
+  no1:"No",no2:"No",no3:"No",no4:"No",no5:"No",no6:"No",
+  s3_h:"3. Storage & security",
+  s3_p:"All your information (alarms, reminders, categories, photos and preferences) is stored locally using SwiftData on your device. Since there's no server, there's no central database that could be breached.",
+  s3_callout:"When we add iCloud sync, your content will be stored in your private iCloud database (Apple), end-to-end encrypted. We'll update this policy before enabling that feature.",
+  s4_h:"4. Sharing with trusted helpers",
+  s4_p:"If you use the feature to share your alarm list with a trusted person, that data is shared via the Apple services you authorize. Calarm is not an intermediary and keeps no copies on any server of ours.",
+  s5_h:"5. Children",
+  s5_p:"Calarm is rated 4+ and is suitable for all ages. We do not knowingly collect personal data from anyone, including children.",
+  s6_h:"6. Changes to this policy",
+  s6_p:"If we update this policy, we'll change the \u201CLast updated\u201D date and, when the change is significant (for example, iCloud sync), we'll let you know inside the app.",
+  s7_h:"7. Contact",
+  s7_p:"Questions about your privacy or this policy? Reach us:",
+  foot_back:"calarm.mathyusolutions.com"
+}};
+function setLang(lang){
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const k=el.getAttribute('data-t');
+    if(lang==='en'){ if(I18N.en[k]!==undefined){ if(!el.dataset.es) el.dataset.es=el.innerHTML; el.innerHTML=I18N.en[k]; } }
+    else { if(el.dataset.es!==undefined) el.innerHTML=el.dataset.es; }
+  });
+  document.querySelectorAll('#lang button').forEach(b=> b.classList.toggle('on', b.dataset.lang===lang));
+  try{ localStorage.setItem('calarm_lang', lang); }catch(e){}
+}
+document.querySelectorAll('#lang button').forEach(b=> b.addEventListener('click',()=> setLang(b.dataset.lang)));
+let saved='es'; try{ saved=localStorage.getItem('calarm_lang')||'es'; }catch(e){}
+setLang(saved);
+</script>
+</body>
+</html>

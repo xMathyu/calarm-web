@@ -1,0 +1,54 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import appIcon from '../assets/images/app-icon.png';
+---
+
+<Layout
+  lang="es"
+  title="Calarm — Página no encontrada"
+  description="La página que buscas no existe."
+  path="404"
+  alternates={{ es: '404', en: '404' }}
+>
+  <main class="nf">
+    <Image src={appIcon} alt="Calarm" width={144} height={144} />
+    <h1>404</h1>
+    <p>Esta página no existe. <br /><span class="en">This page doesn’t exist.</span></p>
+    <a class="btn btn-primary" href="/">Volver al inicio · Home</a>
+  </main>
+</Layout>
+
+<style>
+  .nf {
+    min-height: 100vh;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    text-align: center;
+    gap: 18px;
+    padding: 24px;
+  }
+  .nf :global(img) {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    box-shadow: 0 16px 40px -12px rgba(241, 104, 38, 0.6);
+  }
+  .nf h1 {
+    font-size: clamp(56px, 12vw, 96px);
+    background: var(--grad-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .nf p {
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  .nf .en {
+    color: var(--dim);
+    font-size: 15px;
+  }
+</style>
