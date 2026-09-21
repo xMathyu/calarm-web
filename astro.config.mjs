@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 // Canonical production URL — drives canonical tags, sitemap and absolute OG URLs.
-const SITE = 'https://calarm.mathyusolutions.com';
+const SITE = 'https://calarm-puce.vercel.app';
 
 export default defineConfig({
   site: SITE,
