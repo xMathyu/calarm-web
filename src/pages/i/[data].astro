@@ -3,16 +3,19 @@
  * Invitation landing page — what someone sees when they tap a Calarm invite.
  *
  * On a device with Calarm installed this page is never drawn: the universal
- * link hands the URL straight to the app. It exists for everyone else, and for
- * the link-preview crawlers (iMessage, WhatsApp, Telegram, Slack), which is why
- * the alarm's name and time live in the OG tags rather than only in the markup.
+ * link hands the URL straight to the app. It exists for everyone else, so it is
+ * written as a shop window rather than a notice: the alarm itself is the hero,
+ * and the App Store button is the only real action.
+ *
+ * It also feeds the link-preview crawlers (iMessage, WhatsApp, Telegram,
+ * Slack), which is why the alarm's name and time live in the OG tags too.
  *
  * Rendered per request — every invitation is different.
  */
 export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
-import { decodeInvite, formatWhen } from '../../lib/invite';
+import { decodeInvite, formatDay, formatTime, formatWhen } from '../../lib/invite';
 import { APP_STORE_URL, APP_STORE_ID } from '../../lib/appStore';
 
 const invite = decodeInvite(Astro.params.data);
@@ -23,7 +26,6 @@ if (!invite) {
 }
 
 const lang = invite?.l ?? 'es';
-const when = invite ? formatWhen(invite) : '';
 const tint = invite?.c ?? '#f16826';
 
 const copy =
@@ -31,9 +33,11 @@ const copy =
     ? {
         eyebrow: 'Alarm invitation',
         description: (w: string) => `${w} · Open it in Calarm so it rings on your iPhone too.`,
-        cta: 'Download Calarm',
-        hint: 'Already installed? Tap the link again and the alarm is added by itself.',
-        free: 'Free on the App Store',
+        storeLine1: 'Download on the',
+        openApp: 'I already have Calarm',
+        hint: 'Installed it just now? Tap the link again and the alarm adds itself.',
+        pitch: 'Rings even on silent, locked or in Focus.',
+        free: 'Free · No account · Nothing to configure',
         badTitle: 'This invitation is no longer valid',
         badBody: 'The link is incomplete or has been modified. Ask whoever invited you to send it again.',
         badCta: 'Learn about Calarm',
@@ -41,124 +45,238 @@ const copy =
     : {
         eyebrow: 'Invitación a una alarma',
         description: (w: string) => `${w} · Ábrela en Calarm para que también suene en tu iPhone.`,
-        cta: 'Descargar Calarm',
-        hint: '¿Ya la tienes instalada? Vuelve a tocar el enlace y la alarma se añade sola.',
-        free: 'Gratis en la App Store',
+        storeLine1: 'Descargar en',
+        openApp: 'Ya tengo Calarm',
+        hint: '¿La acabas de instalar? Vuelve a tocar el enlace y la alarma se añade sola.',
+        pitch: 'Suena aunque el iPhone esté en silencio, bloqueado o en Concentración.',
+        free: 'Gratis · Sin cuenta · Sin configurar nada',
         badTitle: 'Esta invitación ya no es válida',
         badBody: 'El enlace está incompleto o se ha modificado. Pídele a quien te invitó que te lo mande otra vez.',
         badCta: 'Conocer Calarm',
       };
 
 const title = invite ? invite.t : copy.badTitle;
-const description = invite ? copy.description(when) : copy.badBody;
+const description = invite ? copy.description(formatWhen(invite)) : copy.badBody;
 
-// The Smart App Banner carries the whole invite URL as `app-argument`, so the
-// app can pick the invitation up even when iOS opens it through the banner.
-// Same reason as `og:url` in the layout: `Astro.url.href` reports `localhost`
-// on Vercel, so the public URL is rebuilt from the configured site.
+// Built from `site` rather than `Astro.url.href`: on Vercel the request URL's
+// host arrives as `localhost`.
 const inviteUrl = new URL(Astro.url.pathname, Astro.site).href;
 const appBanner = `app-id=${APP_STORE_ID}, app-argument=${inviteUrl}`;
+
+// Second door into the app. A universal link can't be triggered from a page on
+// the very domain it belongs to — iOS deliberately ignores that — so "I already
+// have Calarm" has to go through the custom scheme instead.
+const appSchemeUrl = `calarm://i/${Astro.params.data}/`;
 ---
 
 <Layout
   lang={lang}
-  title={invite ? invite.t : copy.badTitle}
+  title={title}
   description={description}
   ogImage={invite ? `/card/${Astro.params.data}/` : '/og-image.png'}
   noindex={true}
   appBanner={appBanner}
 >
   <main class="invite" style={`--tint:${tint}`}>
+    <a class="brand" href={lang === 'en' ? '/en/' : '/'}>
+      <img src="/assets/app-icon.png" alt="" width="34" height="34" />
+      <span>Calarm</span>
+    </a>
+
     <div class="card">
+      <p class="eyebrow">{invite ? copy.eyebrow : 'Calarm'}</p>
+
       {
         invite ? (
           <>
-            <p class="eyebrow">{copy.eyebrow}</p>
+            <div class="tile" aria-hidden="true">
+              {invite.e ? (
+                <span class="emoji">{invite.e}</span>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round">
+                  <circle cx="9.2" cy="4.6" r="1.9" />
+                  <circle cx="14.8" cy="4.6" r="1.9" />
+                  <circle cx="12" cy="13" r="6.6" />
+                  <path d="M12 13V9.4M12 13h2.9M8.2 18.4 6.9 20.6M15.8 18.4l1.3 2.2" />
+                </svg>
+              )}
+            </div>
+
             <h1>{invite.t}</h1>
-            <p class="when">{when}</p>
+            <p class="day">{formatDay(invite)}</p>
+            <p class="time">{formatTime(invite)}</p>
           </>
         ) : (
           <>
-            <p class="eyebrow">Calarm</p>
-            <h1>{copy.badTitle}</h1>
-            <p class="when">{copy.badBody}</p>
+            <h1 class="bad">{copy.badTitle}</h1>
+            <p class="day">{copy.badBody}</p>
           </>
         )
       }
 
-      <a class="cta" href={APP_STORE_URL}>{invite ? copy.cta : copy.badCta}</a>
-      {invite && <p class="hint">{copy.hint}</p>}
-      <p class="free">{copy.free}</p>
+      <div class="actions">
+        <a class="store-btn" href={APP_STORE_URL}>
+          <svg viewBox="0 0 24 24" fill="currentColor"
+            ><path
+              d="M16.5 1.6c.1 1-.3 2-1 2.8-.7.8-1.8 1.4-2.8 1.3-.1-1 .4-2 1-2.7.7-.8 1.9-1.4 2.8-1.4ZM19.9 17c-.5 1.2-.8 1.7-1.4 2.8-1 1.5-2.3 3.4-4 3.4-1.5 0-1.9-1-3.9-1-2 0-2.5 1-4 1-1.6 0-2.9-1.7-3.8-3.2-2.6-4-2.9-8.8-1.3-11.3C2.7 6.6 4.4 5.5 6 5.5c1.6 0 2.6 1 3.9 1 1.3 0 2-1 3.9-1 1.4 0 2.9.8 4 2.1-3.5 1.9-2.9 6.9.1 9.4Z"
+            ></path></svg
+          >
+          <span
+            ><span class="l1">{invite ? copy.storeLine1 : ''}</span><br /><span class="l2"
+              >{invite ? 'App Store' : copy.badCta}</span
+            ></span
+          >
+        </a>
+
+        {invite && <a class="open-app" href={appSchemeUrl}>{copy.openApp}</a>}
+      </div>
+
+      {invite && <p class="pitch">{copy.pitch}</p>}
     </div>
+
+    {invite && <p class="hint">{copy.hint}</p>}
+    {invite && <p class="free">{copy.free}</p>}
   </main>
 </Layout>
 
 <style>
   .invite {
     min-height: 100svh;
-    display: grid;
-    place-items: center;
-    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 28px 16px 40px;
     background:
-      radial-gradient(90rem 40rem at 50% -10%, color-mix(in srgb, var(--tint) 22%, transparent), transparent 70%),
+      radial-gradient(70rem 34rem at 50% -6%, color-mix(in srgb, var(--tint) 30%, transparent), transparent 68%),
       var(--bg);
   }
 
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 4px;
+    color: var(--ink);
+    font-size: 17px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+  .brand img {
+    border-radius: 8px;
+  }
+
   .card {
-    width: min(100%, 460px);
+    width: min(100%, 420px);
     text-align: center;
-    background: var(--card);
+    padding: 34px 26px 30px;
+    background: linear-gradient(180deg, var(--card-2), var(--card));
     border: 1px solid var(--hair);
     border-radius: var(--r-lg);
-    padding: 40px 28px 32px;
+    box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.9);
   }
 
   .eyebrow {
     color: var(--tint);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    font-size: 12px;
+    font-weight: 650;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
-  h1 {
-    margin: 12px 0 8px;
-    font-size: clamp(26px, 7vw, 34px);
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    /* Long alarm names must wrap instead of pushing the card sideways. */
-    overflow-wrap: anywhere;
+  /* The same tinted tile the app draws as a shared alarm's avatar. */
+  .tile {
+    width: 92px;
+    height: 92px;
+    margin: 22px auto 20px;
+    display: grid;
+    place-items: center;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--tint), color-mix(in srgb, var(--tint) 72%, transparent));
+    box-shadow: 0 16px 34px -16px var(--tint);
+  }
+  .tile svg {
+    width: 50px;
+    height: 50px;
+  }
+  .emoji {
+    font-size: 46px;
+    line-height: 1;
   }
 
-  .when {
+  h1 {
+    font-size: clamp(25px, 6.5vw, 31px);
+    line-height: 1.18;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    /* Long alarm names wrap instead of pushing the card sideways. */
+    overflow-wrap: anywhere;
+  }
+  h1.bad {
+    margin-top: 10px;
+  }
+
+  .day {
+    margin-top: 10px;
     color: var(--muted);
-    font-size: 17px;
+    font-size: 16px;
     line-height: 1.5;
   }
 
-  .cta {
-    display: block;
-    margin: 28px 0 0;
-    padding: 16px 24px;
-    border-radius: var(--r-sm);
-    background: var(--grad);
-    color: #fff;
-    font-size: 17px;
-    font-weight: 600;
+  .time {
+    margin-top: 2px;
+    font-size: 40px;
+    font-weight: 660;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .actions {
+    margin-top: 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  /* `.store-btn` itself is the shared one from the landing page. */
+  .actions :global(.store-btn) {
     text-decoration: none;
   }
 
-  .hint {
-    margin-top: 16px;
-    color: var(--dim);
+  .open-app {
+    color: var(--muted);
+    font-size: 15px;
+    text-decoration: none;
+    border-bottom: 1px solid var(--hair-2);
+    padding-bottom: 2px;
+  }
+  .open-app:hover {
+    color: var(--ink);
+  }
+
+  .pitch {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--hair);
+    color: var(--muted);
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.55;
+  }
+
+  .hint {
+    max-width: 380px;
+    color: var(--dim);
+    font-size: 13px;
+    line-height: 1.55;
+    text-align: center;
   }
 
   .free {
-    margin-top: 8px;
     color: var(--dim);
-    font-size: 13px;
+    font-size: 12px;
+    letter-spacing: 0.01em;
   }
 </style>

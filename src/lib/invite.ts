@@ -29,6 +29,8 @@ export interface InvitePayload {
   l?: 'es' | 'en';
   /** Category tint as `#rrggbb`, colors the card. */
   c?: string;
+  /** The emoji the sender picked as the alarm's icon, when they picked one. */
+  e?: string;
   /** The CloudKit share URL the app needs in order to accept the invite. */
   s: string;
 }
@@ -83,6 +85,9 @@ export function decodeInvite(data: string | undefined): InvitePayload | null {
     tz: isValidTimeZone(p.tz) ? p.tz : undefined,
     l: p.l === 'en' ? 'en' : 'es',
     c: /^#[0-9a-fA-F]{6}$/.test(p.c ?? '') ? p.c : undefined,
+    // A couple of code points is all an emoji ever needs; anything longer is
+    // someone trying to push text into the card.
+    e: typeof p.e === 'string' && p.e.length > 0 && p.e.length <= 8 ? p.e : undefined,
     s: p.s,
   };
 }
@@ -99,19 +104,29 @@ function isValidTimeZone(tz: string | undefined): tz is string {
 }
 
 /**
- * Human date + time for the preview, in the alarm's own zone — an alarm set for
- * 9:30 in Madrid reads "9:30" to everyone, which is what the sender meant.
+ * Everything is formatted in the alarm's own zone — one set for 9:30 in Madrid
+ * reads "9:30" to everyone, which is what the sender meant.
  */
-export function formatWhen(payload: InvitePayload): string {
+function format(payload: InvitePayload, options: Intl.DateTimeFormatOptions): string {
   const locale = payload.l === 'en' ? 'en-US' : 'es-ES';
-  const formatter = new Intl.DateTimeFormat(locale, {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    hour: 'numeric',
-    minute: '2-digit',
+  const text = new Intl.DateTimeFormat(locale, {
+    ...options,
     timeZone: payload.tz ?? 'UTC',
-  });
-  const text = formatter.format(new Date(payload.d));
+  }).format(new Date(payload.d));
   return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+/** "Martes, 22 de septiembre" — the day, for the card's own layout. */
+export function formatDay(payload: InvitePayload): string {
+  return format(payload, { weekday: 'long', day: 'numeric', month: 'long' });
+}
+
+/** "9:30" — set apart from the day so the card can give it real weight. */
+export function formatTime(payload: InvitePayload): string {
+  return format(payload, { hour: 'numeric', minute: '2-digit' });
+}
+
+/** Day and time on one line, for the link preview's description. */
+export function formatWhen(payload: InvitePayload): string {
+  return `${formatDay(payload)}, ${formatTime(payload)}`;
 }
