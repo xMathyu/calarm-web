@@ -1,5 +1,7 @@
 # build output
 dist/
+# adapter output (Vercel builds this itself)
+.vercel/
 # generated types
 .astro/
 # dependencies

@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["5QGSG9RD22.MathyuSolutions.Calarm"],
+        "components": [
+          { "/": "/i/*", "comment": "Invitacion a una alarma" }
+        ]
+      }
+    ]
+  }
+}

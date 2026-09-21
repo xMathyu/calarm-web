@@ -14,6 +14,11 @@ interface Props {
   ogImage?: string;
   /** Optional JSON-LD structured data object(s). */
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  /** Keep the page out of search results, and drop canonical/hreflang with it.
+   *  Used by invitation pages: each one is private to its recipient. */
+  noindex?: boolean;
+  /** Shows iOS' Smart App Banner. The string is the `content` attribute. */
+  appBanner?: string;
 }
 
 const {
@@ -24,6 +29,8 @@ const {
   alternates = { es: path, en: path },
   ogImage = '/og-image.png',
   jsonLd,
+  noindex = false,
+  appBanner,
 } = Astro.props;
 
 const site = Astro.site ?? new URL('https://calarm-puce.vercel.app');
@@ -37,6 +44,10 @@ const hreflangs = (Object.entries(alternates) as [Lang, string][]).map(([l, p]) 
   href: new URL(localizedPath(l, p), site).href,
 }));
 const xDefault = new URL(localizedPath('es', alternates.es ?? path), site).href;
+
+// Private pages aren't canonicalised, so og:url must be the URL actually
+// requested — otherwise every invitation would advertise the home page.
+const ogUrl = noindex ? Astro.url.href : canonical;
 
 const ogImageUrl = new URL(ogImage, site).href;
 const ogLocale = lang === 'es' ? 'es_ES' : 'en_US';
@@ -54,9 +65,20 @@ const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
 
-    <link rel="canonical" href={canonical} />
-    {hreflangs.map((h) => <link rel="alternate" hreflang={h.lang} href={h.href} />)}
-    <link rel="alternate" hreflang="x-default" href={xDefault} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {appBanner && <meta name="apple-itunes-app" content={appBanner} />}
+
+    {
+      !noindex && (
+        <>
+          <link rel="canonical" href={canonical} />
+          {hreflangs.map((h) => (
+            <link rel="alternate" hreflang={h.lang} href={h.href} />
+          ))}
+          <link rel="alternate" hreflang="x-default" href={xDefault} />
+        </>
+      )
+    }
 
     <!-- Icons -->
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -68,7 +90,7 @@ const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta property="og:site_name" content="Calarm" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    <meta property="og:url" content={ogUrl} />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:locale" content={ogLocale} />
     <meta property="og:locale:alternate" content={ogLocaleAlt} />

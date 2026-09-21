@@ -1,0 +1,161 @@
+---
+/**
+ * Invitation landing page — what someone sees when they tap a Calarm invite.
+ *
+ * On a device with Calarm installed this page is never drawn: the universal
+ * link hands the URL straight to the app. It exists for everyone else, and for
+ * the link-preview crawlers (iMessage, WhatsApp, Telegram, Slack), which is why
+ * the alarm's name and time live in the OG tags rather than only in the markup.
+ *
+ * Rendered per request — every invitation is different.
+ */
+export const prerender = false;
+
+import Layout from '../../layouts/Layout.astro';
+import { decodeInvite, formatWhen } from '../../lib/invite';
+import { APP_STORE_URL, APP_STORE_ID } from '../../lib/appStore';
+
+const invite = decodeInvite(Astro.params.data);
+
+// A malformed or tampered link still deserves a real page, not a 500.
+if (!invite) {
+  Astro.response.status = 404;
+}
+
+const lang = invite?.l ?? 'es';
+const when = invite ? formatWhen(invite) : '';
+const tint = invite?.c ?? '#f16826';
+
+const copy =
+  lang === 'en'
+    ? {
+        eyebrow: 'Alarm invitation',
+        description: (w: string) => `${w} · Open it in Calarm so it rings on your iPhone too.`,
+        cta: 'Download Calarm',
+        hint: 'Already installed? Tap the link again and the alarm is added by itself.',
+        free: 'Free on the App Store',
+        badTitle: 'This invitation is no longer valid',
+        badBody: 'The link is incomplete or has been modified. Ask whoever invited you to send it again.',
+        badCta: 'Learn about Calarm',
+      }
+    : {
+        eyebrow: 'Invitación a una alarma',
+        description: (w: string) => `${w} · Ábrela en Calarm para que también suene en tu iPhone.`,
+        cta: 'Descargar Calarm',
+        hint: '¿Ya la tienes instalada? Vuelve a tocar el enlace y la alarma se añade sola.',
+        free: 'Gratis en la App Store',
+        badTitle: 'Esta invitación ya no es válida',
+        badBody: 'El enlace está incompleto o se ha modificado. Pídele a quien te invitó que te lo mande otra vez.',
+        badCta: 'Conocer Calarm',
+      };
+
+const title = invite ? invite.t : copy.badTitle;
+const description = invite ? copy.description(when) : copy.badBody;
+
+// The Smart App Banner carries the whole invite URL as `app-argument`, so the
+// app can pick the invitation up even when iOS opens it through the banner.
+const appBanner = `app-id=${APP_STORE_ID}, app-argument=${Astro.url.href}`;
+---
+
+<Layout
+  lang={lang}
+  title={invite ? invite.t : copy.badTitle}
+  description={description}
+  ogImage={invite ? `/card/${Astro.params.data}/` : '/og-image.png'}
+  noindex={true}
+  appBanner={appBanner}
+>
+  <main class="invite" style={`--tint:${tint}`}>
+    <div class="card">
+      {
+        invite ? (
+          <>
+            <p class="eyebrow">{copy.eyebrow}</p>
+            <h1>{invite.t}</h1>
+            <p class="when">{when}</p>
+          </>
+        ) : (
+          <>
+            <p class="eyebrow">Calarm</p>
+            <h1>{copy.badTitle}</h1>
+            <p class="when">{copy.badBody}</p>
+          </>
+        )
+      }
+
+      <a class="cta" href={APP_STORE_URL}>{invite ? copy.cta : copy.badCta}</a>
+      {invite && <p class="hint">{copy.hint}</p>}
+      <p class="free">{copy.free}</p>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .invite {
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background:
+      radial-gradient(90rem 40rem at 50% -10%, color-mix(in srgb, var(--tint) 22%, transparent), transparent 70%),
+      var(--bg);
+  }
+
+  .card {
+    width: min(100%, 460px);
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--hair);
+    border-radius: var(--r-lg);
+    padding: 40px 28px 32px;
+  }
+
+  .eyebrow {
+    color: var(--tint);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 12px 0 8px;
+    font-size: clamp(26px, 7vw, 34px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    /* Long alarm names must wrap instead of pushing the card sideways. */
+    overflow-wrap: anywhere;
+  }
+
+  .when {
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  .cta {
+    display: block;
+    margin: 28px 0 0;
+    padding: 16px 24px;
+    border-radius: var(--r-sm);
+    background: var(--grad);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .hint {
+    margin-top: 16px;
+    color: var(--dim);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .free {
+    margin-top: 8px;
+    color: var(--dim);
+    font-size: 13px;
+  }
+</style>
