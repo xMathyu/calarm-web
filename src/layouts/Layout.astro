@@ -47,7 +47,10 @@ const xDefault = new URL(localizedPath('es', alternates.es ?? path), site).href;
 
 // Private pages aren't canonicalised, so og:url must be the URL actually
 // requested — otherwise every invitation would advertise the home page.
-const ogUrl = noindex ? Astro.url.href : canonical;
+// Built from `site` rather than `Astro.url.href`: behind Vercel's serverless
+// runtime the request URL's host comes through as `localhost`, which would
+// put a dead link in every preview card.
+const ogUrl = noindex ? new URL(Astro.url.pathname, site).href : canonical;
 
 const ogImageUrl = new URL(ogImage, site).href;
 const ogLocale = lang === 'es' ? 'es_ES' : 'en_US';

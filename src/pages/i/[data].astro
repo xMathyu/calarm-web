@@ -54,7 +54,10 @@ const description = invite ? copy.description(when) : copy.badBody;
 
 // The Smart App Banner carries the whole invite URL as `app-argument`, so the
 // app can pick the invitation up even when iOS opens it through the banner.
-const appBanner = `app-id=${APP_STORE_ID}, app-argument=${Astro.url.href}`;
+// Same reason as `og:url` in the layout: `Astro.url.href` reports `localhost`
+// on Vercel, so the public URL is rebuilt from the configured site.
+const inviteUrl = new URL(Astro.url.pathname, Astro.site).href;
+const appBanner = `app-id=${APP_STORE_ID}, app-argument=${inviteUrl}`;
 ---
 
 <Layout
