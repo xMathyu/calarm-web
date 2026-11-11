@@ -1,9 +1,9 @@
 ---
 /**
- * Invitation landing page — what someone sees when they tap a Calarm invite,
+ * Invitation landing page — what someone sees when they tap a Calarmi invite,
  * to an alarm (`/i/`) or to a countdown (`/c/`).
  *
- * On a device with Calarm installed this page is never drawn: the universal
+ * On a device with Calarmi installed this page is never drawn: the universal
  * link hands the URL straight to the app. It exists for everyone else, so it is
  * written as a shop window rather than a notice: the alarm (or the countdown)
  * itself is the hero, and the App Store button is the only real action.
@@ -49,10 +49,10 @@ const copy =
         eyebrow: isCountdown ? 'Countdown invitation' : 'Alarm invitation',
         description: (w: string) =>
           isCountdown
-            ? `${w} · Open it in Calarm to follow the countdown.`
-            : `${w} · Open it in Calarm so it rings on your iPhone too.`,
+            ? `${w} · Open it in Calarmi to follow the countdown.`
+            : `${w} · Open it in Calarmi so it rings on your iPhone too.`,
         storeLine1: 'Download on the',
-        openApp: 'I already have Calarm',
+        openApp: 'I already have Calarmi',
         hint: isCountdown
           ? 'Installed it just now? Tap the link again and the countdown adds itself.'
           : 'Installed it just now? Tap the link again and the alarm adds itself.',
@@ -62,7 +62,7 @@ const copy =
         free: 'Free · No account · Nothing to configure',
         badTitle: 'This invitation is no longer valid',
         badBody: 'The link is incomplete or has been modified. Ask whoever invited you to send it again.',
-        badCta: 'Learn about Calarm',
+        badCta: 'Learn about Calarmi',
         today: 'Today!',
         unit: (n: number) => (n === 1 ? 'day left' : 'days left'),
         ago: (n: number) => (n === 1 ? 'day ago' : 'days ago'),
@@ -71,10 +71,10 @@ const copy =
         eyebrow: isCountdown ? 'Invitación a una cuenta regresiva' : 'Invitación a una alarma',
         description: (w: string) =>
           isCountdown
-            ? `${w} · Ábrela en Calarm para seguir la cuenta regresiva.`
-            : `${w} · Ábrela en Calarm para que también suene en tu iPhone.`,
+            ? `${w} · Ábrela en Calarmi para seguir la cuenta regresiva.`
+            : `${w} · Ábrela en Calarmi para que también suene en tu iPhone.`,
         storeLine1: 'Descargar en',
-        openApp: 'Ya tengo Calarm',
+        openApp: 'Ya tengo Calarmi',
         hint: isCountdown
           ? '¿La acabas de instalar? Vuelve a tocar el enlace y la cuenta regresiva se añade sola.'
           : '¿La acabas de instalar? Vuelve a tocar el enlace y la alarma se añade sola.',
@@ -84,7 +84,7 @@ const copy =
         free: 'Gratis · Sin cuenta · Sin configurar nada',
         badTitle: 'Esta invitación ya no es válida',
         badBody: 'El enlace está incompleto o se ha modificado. Pídele a quien te invitó que te lo mande otra vez.',
-        badCta: 'Conocer Calarm',
+        badCta: 'Conocer Calarmi',
         today: '¡Hoy!',
         unit: (n: number) => (n === 1 ? 'día' : 'días'),
         ago: (n: number) => (n === 1 ? 'día atrás' : 'días atrás'),
@@ -108,7 +108,7 @@ const appBanner = `app-id=${APP_STORE_ID}, app-argument=${inviteUrl}`;
 
 // Second door into the app. A universal link can't be triggered from a page on
 // the very domain it belongs to — iOS deliberately ignores that — so "I already
-// have Calarm" has to go through the custom scheme instead.
+// have Calarmi" has to go through the custom scheme instead.
 const appSchemeUrl = `calarm://${path}/${data}/`;
 
 // The tile shows the alarm's own icon when it isn't an emoji: the look-alike
@@ -134,11 +134,11 @@ const cardQuery = photo ? `?${PHOTO_PARAM}=${photo.toString('base64url')}` : '';
   <main class="invite" style={`--tint:${tint}`}>
     <a class="brand" href={lang === 'en' ? '/en/' : '/'}>
       <img src="/assets/app-icon.png" alt="" width="34" height="34" />
-      <span>Calarm</span>
+      <span>Calarmi</span>
     </a>
 
     <div class="card">
-      <p class="eyebrow">{invite ? copy.eyebrow : 'Calarm'}</p>
+      <p class="eyebrow">{invite ? copy.eyebrow : 'Calarmi'}</p>
 
       {
         invite ? (
