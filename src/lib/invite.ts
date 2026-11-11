@@ -31,8 +31,14 @@ export interface InvitePayload {
   c?: string;
   /** The emoji the sender picked as the alarm's icon, when they picked one. */
   e?: string;
+  /** Otherwise the SF Symbol name of its icon; `icons.ts` draws a look-alike. */
+  y?: string;
   /** The CloudKit share URL the app needs in order to accept the invite. */
   s: string;
+  /** `'c'` for a countdown (its links live under `/c/`); absent for an alarm. */
+  k?: 'c';
+  /** Countdowns only: whether `d` carries a time of day worth showing. */
+  h?: boolean;
 }
 
 /** Decodes base64url (no padding) into a UTF-8 string. */
@@ -88,8 +94,36 @@ export function decodeInvite(data: string | undefined): InvitePayload | null {
     // A couple of code points is all an emoji ever needs; anything longer is
     // someone trying to push text into the card.
     e: typeof p.e === 'string' && p.e.length > 0 && p.e.length <= 8 ? p.e : undefined,
+    // SF Symbol names are lowercase words joined by dots, nothing else.
+    y: typeof p.y === 'string' && /^[a-z0-9.]{1,48}$/.test(p.y) ? p.y : undefined,
     s: p.s,
+    k: p.k === 'c' ? 'c' : undefined,
+    h: p.h === true ? true : p.h === false ? false : undefined,
   };
+}
+
+/** The query parameter that carries the alarm's photo, see `decodePhoto`. */
+export const PHOTO_PARAM = 'f';
+
+/** base64url characters. The app sends at most 1,800 bytes, ~2,400 characters. */
+const MAX_PHOTO_CHARS = 4096;
+
+/**
+ * The alarm's photo icon, when the link carries one: a tiny square JPEG
+ * (64 px, made by `InvitePhoto.swift`), base64url in the `f` query parameter.
+ * It lives outside the payload so a bad photo can never break the invitation,
+ * and so it isn't base64-encoded twice.
+ *
+ * Attacker-controlled like the rest of the link: only something bounded and
+ * shaped like a JPEG gets through, and its consumers (sharp with a pixel
+ * limit, the browser) treat it as an untrusted image.
+ */
+export function decodePhoto(value: string | null | undefined): Buffer | undefined {
+  if (!value || value.length > MAX_PHOTO_CHARS || !/^[A-Za-z0-9_-]+$/.test(value)) return undefined;
+  const bytes = Buffer.from(value, 'base64url');
+  // JPEG's start-of-image marker, followed by the next marker.
+  if (bytes.length < 4 || bytes[0] !== 0xff || bytes[1] !== 0xd8 || bytes[2] !== 0xff) return undefined;
+  return bytes;
 }
 
 /** True when `tz` is a zone this runtime actually knows. */
@@ -129,4 +163,33 @@ export function formatTime(payload: InvitePayload): string {
 /** Day and time on one line, for the link preview's description. */
 export function formatWhen(payload: InvitePayload): string {
   return `${formatDay(payload)}, ${formatTime(payload)}`;
+}
+
+/**
+ * Calendar days from today to the countdown's day, both taken in the sender's
+ * zone — the same count the app shows ("faltan 23 días"), not 24-hour blocks.
+ * Negative once the day has passed.
+ */
+export function daysUntil(payload: InvitePayload, now: Date = new Date()): number {
+  const zone = payload.tz ?? 'UTC';
+  const day = (date: Date): number => {
+    // en-CA formats as YYYY-MM-DD, easy to split.
+    const [y, m, d] = new Intl.DateTimeFormat('en-CA', {
+      timeZone: zone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })
+      .format(date)
+      .split('-')
+      .map(Number);
+    return Date.UTC(y, m - 1, d);
+  };
+  return Math.round((day(new Date(payload.d)) - day(now)) / 86_400_000);
+}
+
+/** "Sábado, 26 de noviembre de 2026" (and the time, if the event has one). */
+export function formatCountdownDay(payload: InvitePayload): string {
+  const day = format(payload, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  return payload.h ? `${day} · ${formatTime(payload)}` : day;
 }

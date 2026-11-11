@@ -1,0 +1,24 @@
+---
+/**
+ * An invitation to a countdown: `/c/<data>/`, as `InviteLink.swift` builds it.
+ * The page itself is `components/InvitePage.astro`; this route decodes the
+ * link and sets the status. Rendered per request — every invitation differs.
+ */
+export const prerender = false;
+
+import InvitePage from '../../components/InvitePage.astro';
+import { decodeInvite, decodePhoto, PHOTO_PARAM } from '../../lib/invite';
+
+const decoded = decodeInvite(Astro.params.data);
+// Only countdown payloads: an alarm link pasted under `/c/` is not one.
+const invite = decoded && decoded.k === 'c' ? decoded : null;
+
+// A malformed or tampered link still deserves a real page, not a 500.
+if (!invite) {
+  Astro.response.status = 404;
+}
+
+const photo = invite ? decodePhoto(Astro.url.searchParams.get(PHOTO_PARAM)) : undefined;
+---
+
+<InvitePage invite={invite} data={Astro.params.data ?? ''} path="c" photo={photo} />

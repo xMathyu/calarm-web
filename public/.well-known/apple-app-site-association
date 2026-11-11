@@ -4,7 +4,8 @@
       {
         "appIDs": ["5QGSG9RD22.MathyuSolutions.Calarm"],
         "components": [
-          { "/": "/i/*", "comment": "Invitacion a una alarma" }
+          { "/": "/i/*", "comment": "Invitacion a una alarma" },
+          { "/": "/c/*", "comment": "Invitacion a una cuenta regresiva" }
         ]
       }
     ]
