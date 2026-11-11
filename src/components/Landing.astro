@@ -20,7 +20,9 @@ const homeHref = pageHref('home', lang);
 const policyHref = pageHref('privacy', lang);
 const esHref = pageHref('home', 'es');
 const enHref = pageHref('home', 'en');
-const APP_STORE = 'https://apps.apple.com/pe/app/calarm-smart-alarms/id6772419323';
+const APP_STORE = 'https://apps.apple.com/app/id6772419323';
+const freeKeys = ['pr.free.1', 'pr.free.2', 'pr.free.3', 'pr.free.4', 'pr.free.5', 'pr.free.6'] as const;
+const plusKeys = ['pr.plus.1', 'pr.plus.2', 'pr.plus.3', 'pr.plus.4'] as const;
 ---
 
 <Nav lang={lang} homeHref={homeHref} policyHref={policyHref} esHref={esHref} enHref={enHref} />
@@ -192,6 +194,40 @@ const APP_STORE = 'https://apps.apple.com/pe/app/calarm-smart-alarms/id677241932
         <span class="join">{t('m.join')}</span>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ================= PRICING ================= -->
+<section class="pricing sec-pad" id="pricing">
+  <div class="wrap">
+    <div class="reveal pr-head">
+      <span class="eyebrow">{t('pr.eyebrow')}</span>
+      <h2>{t('pr.h')}</h2>
+      <p>{t('pr.p')}</p>
+    </div>
+    <div class="pr-grid">
+      <div class="pr-card reveal">
+        <h3>{t('pr.free.h')}</h3>
+        <p class="price"><strong>{t('pr.free.price')}</strong> <span>{t('pr.free.per')}</span></p>
+        <ul>
+          {freeKeys.map((k) => (
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 12.5 4.5 4.5L19 7.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>{t(k)}</span></li>
+          ))}
+        </ul>
+      </div>
+      <div class="pr-card plus reveal">
+        <h3><span class="grad">{t('pr.plus.h')}</span></h3>
+        <p class="price"><strong>{t('pr.plus.price')}</strong> <span>{t('pr.plus.per')}</span></p>
+        <p class="alt">{t('pr.plus.alt')}</p>
+        <p class="lead">{t('pr.plus.0')}</p>
+        <ul>
+          {plusKeys.map((k) => (
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 12.5 4.5 4.5L19 7.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>{t(k)}</span></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+    <p class="pr-note reveal">{t('pr.note')}</p>
   </div>
 </section>
 
@@ -730,6 +766,92 @@ const APP_STORE = 'https://apps.apple.com/pe/app/calarm-smart-alarms/id677241932
   }
   @media (max-width: 560px) {
     .grid6 {
+      grid-template-columns: 1fr;
+    }
+  }
+  /* pricing */
+  .pr-head {
+    text-align: center;
+  }
+  .pr-head h2 {
+    font-size: clamp(28px, 4vw, 46px);
+    margin: 14px auto 18px;
+    max-width: 18ch;
+  }
+  .pr-head p {
+    color: var(--muted);
+    font-size: 19px;
+    max-width: 52ch;
+    margin: 0 auto 44px;
+  }
+  .pr-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    max-width: 880px;
+    margin-inline: auto;
+  }
+  .pr-card {
+    background: var(--card);
+    border: 1px solid var(--hair);
+    border-radius: var(--r-lg);
+    padding: 30px;
+  }
+  .pr-card.plus {
+    border-color: rgba(241, 104, 38, 0.45);
+    background: linear-gradient(180deg, rgba(241, 104, 38, 0.1), var(--card) 55%);
+  }
+  .pr-card h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  .pr-card .price strong {
+    font-size: 36px;
+    letter-spacing: -0.02em;
+  }
+  .pr-card .price span,
+  .pr-card .alt {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .pr-card .alt {
+    margin-top: 4px;
+  }
+  .pr-card .lead {
+    margin-top: 18px;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .pr-card ul {
+    list-style: none;
+    margin-top: 18px;
+    display: grid;
+    gap: 11px;
+  }
+  .pr-card li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .pr-card li svg {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    color: var(--accent-2);
+  }
+  .pr-note {
+    color: var(--dim);
+    font-size: 13px;
+    line-height: 1.55;
+    max-width: 70ch;
+    margin: 26px auto 0;
+    text-align: center;
+  }
+  @media (max-width: 760px) {
+    .pr-grid {
       grid-template-columns: 1fr;
     }
   }

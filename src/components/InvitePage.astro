@@ -128,7 +128,11 @@ const description = invite
 
 // Built from `site` rather than `Astro.url.href`: on Vercel the request URL's
 // host arrives as `localhost`.
-const inviteUrl = new URL(Astro.url.pathname, Astro.site).href;
+// Las invitaciones viven SIEMPRE en el host antiguo: es el único que la app tiene en
+// `applinks:` y el único que acepta `InviteLink` (Calarm/Services/InviteLink.swift), así
+// que el app-argument del banner no puede seguir al dominio canónico de la web.
+const INVITE_ORIGIN = 'https://calarm-puce.vercel.app';
+const inviteUrl = new URL(Astro.url.pathname, INVITE_ORIGIN).href;
 const appBanner = `app-id=${APP_STORE_ID}, app-argument=${inviteUrl}`;
 
 // Second door into the app. A universal link can't be triggered from a page on

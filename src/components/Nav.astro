@@ -14,7 +14,7 @@ interface Props {
 }
 const { lang, homeHref, policyHref, esHref, enHref } = Astro.props;
 const t = useTranslations(lang);
-const APP_STORE = 'https://apps.apple.com/pe/app/calarm-smart-alarms/id6772419323';
+const APP_STORE = 'https://apps.apple.com/app/id6772419323';
 ---
 
 <nav class="nav" id="nav">
@@ -24,6 +24,7 @@ const APP_STORE = 'https://apps.apple.com/pe/app/calarm-smart-alarms/id677241932
     </a>
     <div class="nav-links">
       <a href="#features">{t('nav.features')}</a>
+      <a href="#pricing">{t('nav.pricing')}</a>
       <a href="#privacy">{t('nav.privacy')}</a>
       <a href={policyHref}>{t('nav.policy')}</a>
     </div>
