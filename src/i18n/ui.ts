@@ -78,7 +78,7 @@ const es = {
   'pv.s6_p': "Si actualizamos esta política, cambiaremos la fecha de \"Última actualización\" y, cuando el cambio sea importante (por ejemplo, sincronización con iCloud), te lo avisaremos dentro de la app.",
   'pv.s7_h': "7. Contacto",
   'pv.s7_p': "¿Tienes preguntas sobre tu privacidad o esta política? Escríbenos:",
-  'pv.foot_back': "calarmi.vercel.app",
+  'pv.foot_back': "calarmi.mathyusolutions.com",
   'nav.challenges': "Retos",
   'nav.language': "Idioma",
 } as const;
@@ -145,7 +145,7 @@ const en: Record<UIKey, string> = {
   'pv.s6_p': "If we update this policy, we’ll change the \"Last updated\" date and, when the change is significant (for example, iCloud sync), we’ll let you know inside the app.",
   'pv.s7_h': "7. Contact",
   'pv.s7_p': "Questions about your privacy or this policy? Reach us:",
-  'pv.foot_back': "calarmi.vercel.app",
+  'pv.foot_back': "calarmi.mathyusolutions.com",
   'nav.challenges': "Challenges",
   'nav.language': "Language",
 };
@@ -211,7 +211,7 @@ const pt: Partial<Record<UIKey, string>> = {
   'pv.s6_p': "Se atualizarmos esta política, mudaremos a data da “Última atualização” e, quando a mudança for importante (por exemplo, a sincronização com o iCloud), avisaremos você dentro do app.",
   'pv.s7_h': "7. Contato",
   'pv.s7_p': "Tem dúvidas sobre a sua privacidade ou sobre esta política? Escreva para nós:",
-  'pv.foot_back': "calarmi.vercel.app",
+  'pv.foot_back': "calarmi.mathyusolutions.com",
   'nav.challenges': "Desafios",
   'nav.language': "Idioma",
 };
@@ -276,7 +276,7 @@ const de: Partial<Record<UIKey, string>> = {
   'pv.s6_p': "Wenn wir diese Erklärung aktualisieren, ändern wir das Datum bei „Zuletzt aktualisiert“ und informieren dich bei wichtigen Änderungen (zum Beispiel der Synchronisierung über iCloud) direkt in der App.",
   'pv.s7_h': "7. Kontakt",
   'pv.s7_p': "Fragen zu deiner Privatsphäre oder zu dieser Erklärung? Schreib uns:",
-  'pv.foot_back': "calarmi.vercel.app",
+  'pv.foot_back': "calarmi.mathyusolutions.com",
   'nav.challenges': "Aufgaben",
   'nav.language': "Sprache",
 };

@@ -4,9 +4,9 @@ import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 
 // Canonical production URL — drives canonical tags, sitemap and absolute OG URLs.
-// calarm-puce.vercel.app sigue sirviendo el mismo sitio: es el host de las invitaciones
-// (applinks: de la app e InviteLink.host), ver INVITE_ORIGIN en InvitePage.astro.
-const SITE = 'https://calarmi.vercel.app';
+// calarm-puce.vercel.app y calarmi.vercel.app siguen sirviendo el mismo sitio: los
+// enlaces de invitación ya enviados viven ahí (ver INVITE_ORIGIN en InvitePage.astro).
+const SITE = 'https://calarmi.mathyusolutions.com';
 
 export default defineConfig({
   site: SITE,

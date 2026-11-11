@@ -9,7 +9,7 @@ interface Props {
 }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
-const site = (Astro.site ?? new URL('https://calarmi.vercel.app')).origin;
+const site = (Astro.site ?? new URL('https://calarmi.mathyusolutions.com')).origin;
 const path = routes.privacy[lang];
 
 const jsonLd = {
