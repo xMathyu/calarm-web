@@ -43,8 +43,33 @@ const isCountdown = path === 'c';
 const lang = invite?.l ?? 'es';
 const tint = invite?.c ?? '#f16826';
 
+const pt = {
+  eyebrow: isCountdown ? 'Convite para uma contagem regressiva' : 'Convite para um alarme',
+  description: (w: string) =>
+    isCountdown
+      ? `${w} · Abra no Calarmi para acompanhar a contagem regressiva.`
+      : `${w} · Abra no Calarmi para que ele toque também no seu iPhone.`,
+  storeLine1: 'Baixar na',
+  openApp: 'Já tenho o Calarmi',
+  hint: isCountdown
+    ? 'Acabou de instalar? Toque no link de novo e a contagem regressiva é adicionada sozinha.'
+    : 'Acabou de instalar? Toque no link de novo e o alarme é adicionado sozinho.',
+  pitch: isCountdown
+    ? 'Conta os dias que faltam, com foto e widgets para a Tela de Início.'
+    : 'Toca mesmo no silencioso, com a tela bloqueada ou em Foco.',
+  free: 'Grátis · Sem conta · Sem configurar nada',
+  badTitle: 'Este convite não é mais válido',
+  badBody: 'O link está incompleto ou foi modificado. Peça para quem te convidou enviar de novo.',
+  badCta: 'Conhecer o Calarmi',
+  today: 'Hoje!',
+  unit: (n: number) => (n === 1 ? 'dia' : 'dias'),
+  ago: (n: number) => (n === 1 ? 'dia atrás' : 'dias atrás'),
+};
+
 const copy =
-  lang === 'en'
+  lang === 'pt'
+    ? pt
+    : lang === 'en'
     ? {
         eyebrow: isCountdown ? 'Countdown invitation' : 'Alarm invitation',
         description: (w: string) =>
@@ -124,7 +149,8 @@ const cardQuery = photo ? `?${PHOTO_PARAM}=${photo.toString('base64url')}` : '';
 ---
 
 <Layout
-  lang={lang}
+  lang={lang === 'en' ? 'en' : 'es'}
+  htmlLang={lang === 'pt' ? 'pt-BR' : undefined}
   title={title}
   description={description}
   ogImage={invite ? `/card/${data}/${cardQuery}` : '/og-image.png'}

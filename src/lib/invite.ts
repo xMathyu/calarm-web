@@ -26,7 +26,7 @@ export interface InvitePayload {
   /** IANA zone the alarm was set in, so the card shows the sender's time. */
   tz?: string;
   /** Sender's app language, picks the card's wording. */
-  l?: 'es' | 'en';
+  l?: 'es' | 'en' | 'pt';
   /** Category tint as `#rrggbb`, colors the card. */
   c?: string;
   /** The emoji the sender picked as the alarm's icon, when they picked one. */
@@ -89,7 +89,7 @@ export function decodeInvite(data: string | undefined): InvitePayload | null {
     t: p.t.slice(0, 120),
     d: p.d,
     tz: isValidTimeZone(p.tz) ? p.tz : undefined,
-    l: p.l === 'en' ? 'en' : 'es',
+    l: p.l === 'en' || p.l === 'pt' ? p.l : 'es',
     c: /^#[0-9a-fA-F]{6}$/.test(p.c ?? '') ? p.c : undefined,
     // A couple of code points is all an emoji ever needs; anything longer is
     // someone trying to push text into the card.
@@ -142,7 +142,7 @@ function isValidTimeZone(tz: string | undefined): tz is string {
  * reads "9:30" to everyone, which is what the sender meant.
  */
 function format(payload: InvitePayload, options: Intl.DateTimeFormatOptions): string {
-  const locale = payload.l === 'en' ? 'en-US' : 'es-ES';
+  const locale = payload.l === 'en' ? 'en-US' : payload.l === 'pt' ? 'pt-BR' : 'es-ES';
   const text = new Intl.DateTimeFormat(locale, {
     ...options,
     timeZone: payload.tz ?? 'UTC',

@@ -19,10 +19,14 @@ interface Props {
   noindex?: boolean;
   /** Shows iOS' Smart App Banner. The string is the `content` attribute. */
   appBanner?: string;
+  /** Overrides `<html lang>` and og:locale for a page in a language the site
+   *  itself doesn't have (the Portuguese invitation page). */
+  htmlLang?: string;
 }
 
 const {
   lang,
+  htmlLang,
   title,
   description,
   path = '',
@@ -53,14 +57,14 @@ const xDefault = new URL(localizedPath('es', alternates.es ?? path), site).href;
 const ogUrl = noindex ? new URL(Astro.url.pathname, site).href : canonical;
 
 const ogImageUrl = new URL(ogImage, site).href;
-const ogLocale = lang === 'es' ? 'es_ES' : 'en_US';
+const ogLocale = htmlLang ? htmlLang.replace('-', '_') : lang === 'es' ? 'es_ES' : 'en_US';
 const ogLocaleAlt = lang === 'es' ? 'en_US' : 'es_ES';
 
 const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={htmlLang ?? lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
