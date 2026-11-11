@@ -1,8 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import appIcon from '../assets/images/app-icon.png';
-import { useTranslations, allLangs } from '../i18n/utils';
+import { useTranslations, allLangs, pageHref } from '../i18n/utils';
 import { landing } from '../i18n/landing';
+import { help } from '../i18n/help';
 import { languages, localeTags, type Lang } from '../i18n/ui';
 import { APP_STORE_URL } from '../lib/appStore';
 
@@ -37,6 +38,7 @@ const copy = landing[lang];
         </div>
         <div class="foot-col">
           <h2>{t('foot.support')}</h2>
+          <a href={pageHref('help', lang)}>{help[lang].title}</a>
           <a href="mailto:xmathyu@gmail.com">xmathyu@gmail.com</a>
           <a href="https://github.com/xMathyu/Calarm/issues" target="_blank" rel="noopener">{t('foot.issues')}</a>
           <a href={policyHref}>{t('foot.policy')}</a>

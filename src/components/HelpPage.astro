@@ -1,0 +1,206 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from './Nav.astro';
+import Footer from './Footer.astro';
+import { help, SUPPORT_EMAIL } from '../i18n/help';
+import { pageHref, pageHrefs, routes, localizedPath } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = help[lang];
+const homeHref = pageHref('home', lang);
+const site = (Astro.site ?? new URL('https://calarmi.mathyusolutions.com')).origin;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  url: `${site}${localizedPath(lang, routes.help[lang])}`,
+  mainEntity: c.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+
+<Layout lang={lang} title={c.metaTitle} description={c.metaDescription} path={routes.help[lang]} alternates={routes.help} jsonLd={jsonLd}>
+  <Nav lang={lang} homeHref={homeHref} langHrefs={pageHrefs('help')} />
+  <main class="wrap help">
+    <header class="head">
+      <p class="eyebrow">{c.eyebrow}</p>
+      <h1>{c.title}</h1>
+      <p class="lead">{c.lead}</p>
+    </header>
+
+    <section class="contact" aria-labelledby="contact-title">
+      <div class="contact-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="m4 7 8 6 8-6"></path></svg>
+      </div>
+      <div class="contact-copy">
+        <h2 id="contact-title">{c.contactTitle}</h2>
+        <p>{c.contactBody}</p>
+        <div class="actions">
+          <a class="primary" href={`mailto:${SUPPORT_EMAIL}?subject=Calarmi`}>{c.emailCta} · {SUPPORT_EMAIL}</a>
+          <a class="ghost" href="https://github.com/xMathyu/Calarm/issues" target="_blank" rel="noopener">{c.issueCta}</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq" aria-labelledby="faq-title">
+      <h2 id="faq-title">{c.faqTitle}</h2>
+      {
+        c.faq.map((f) => (
+          <details>
+            <summary>
+              <span>{f.q}</span>
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6" /></svg>
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))
+      }
+    </section>
+
+    <p class="links">
+      <a href={pageHref('privacy', lang)}>{c.privacyLink}</a>
+      <span aria-hidden="true">·</span>
+      <a href={homeHref}>{c.back}</a>
+    </p>
+  </main>
+  <Footer lang={lang} homeHref={homeHref} policyHref={pageHref('privacy', lang)} homeHrefs={pageHrefs('home')} />
+</Layout>
+
+<style>
+  .help {
+    max-width: 860px;
+    padding-top: 140px;
+    padding-bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .eyebrow {
+    color: var(--accent-2);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 68px);
+  }
+  .lead {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 19px;
+    line-height: 1.55;
+  }
+  .contact {
+    display: flex;
+    gap: 22px;
+    padding: 30px;
+    border-radius: 28px;
+    background: linear-gradient(180deg, rgba(255, 106, 43, 0.14), var(--card) 70%);
+    border: 1px solid rgba(255, 122, 61, 0.4);
+  }
+  .contact-icon {
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: rgba(255, 122, 61, 0.15);
+    color: var(--accent-2);
+    display: grid;
+    place-items: center;
+  }
+  .contact-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+  .contact h2 {
+    font-size: 26px;
+  }
+  .contact p {
+    margin-top: 8px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .primary,
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 18px;
+    border-radius: 14px;
+    font-weight: 650;
+    font-size: 15px;
+  }
+  .primary {
+    background: var(--grad);
+    color: #1a0c04;
+    overflow-wrap: anywhere;
+  }
+  .ghost {
+    border: 1px solid var(--hair-2);
+    color: var(--ink);
+  }
+  .faq h2 {
+    font-size: 30px;
+    margin-bottom: 14px;
+  }
+  details {
+    border-bottom: 1px solid var(--hair);
+  }
+  summary {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    min-height: 60px;
+    padding: 14px 0;
+    cursor: pointer;
+    font-weight: 650;
+    font-size: 18px;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary svg {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    color: var(--dim);
+    transition: transform 0.2s;
+  }
+  details[open] summary svg {
+    transform: rotate(180deg);
+  }
+  details p {
+    padding: 0 0 20px;
+    color: var(--muted);
+    line-height: 1.65;
+    font-size: 16px;
+    max-width: 68ch;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: var(--dim);
+  }
+  .links a {
+    color: var(--accent-2);
+  }
+  @media (max-width: 560px) {
+    .contact {
+      flex-direction: column;
+    }
+  }
+</style>

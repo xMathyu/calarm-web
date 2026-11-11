@@ -26,6 +26,7 @@ export function localizedPath(lang: Lang, path = ''): string {
 export const routes = {
   home: { es: '', en: '', pt: '', de: '' },
   privacy: { es: 'privacidad', en: 'privacy', pt: 'privacidade', de: 'datenschutz' },
+  help: { es: 'ayuda', en: 'help', pt: 'ajuda', de: 'hilfe' },
 } as const satisfies Record<string, Record<Lang, string>>;
 
 export type Page = keyof typeof routes;
