@@ -1,7 +1,9 @@
 ---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/nunito';
 import '../styles/global.css';
-import { type Lang } from '../i18n/ui';
-import { localizedPath } from '../i18n/utils';
+import { localeTags, type Lang } from '../i18n/ui';
+import { allLangs, localizedPath } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
@@ -30,7 +32,7 @@ const {
   title,
   description,
   path = '',
-  alternates = { es: path, en: path },
+  alternates = Object.fromEntries(allLangs.map((l) => [l, path])) as Record<Lang, string>,
   ogImage = '/og-image.png',
   jsonLd,
   noindex = false,
@@ -44,7 +46,7 @@ const canonical = new URL(localizedPath(lang, path), site).href;
 
 // hreflang alternates — one per available locale, plus x-default → Spanish.
 const hreflangs = (Object.entries(alternates) as [Lang, string][]).map(([l, p]) => ({
-  lang: l,
+  lang: localeTags[l],
   href: new URL(localizedPath(l, p), site).href,
 }));
 const xDefault = new URL(localizedPath('es', alternates.es ?? path), site).href;
@@ -57,14 +59,15 @@ const xDefault = new URL(localizedPath('es', alternates.es ?? path), site).href;
 const ogUrl = noindex ? new URL(Astro.url.pathname, site).href : canonical;
 
 const ogImageUrl = new URL(ogImage, site).href;
-const ogLocale = htmlLang ? htmlLang.replace('-', '_') : lang === 'es' ? 'es_ES' : 'en_US';
-const ogLocaleAlt = lang === 'es' ? 'en_US' : 'es_ES';
+const ogLocales: Record<Lang, string> = { es: 'es_ES', en: 'en_US', pt: 'pt_BR', de: 'de_DE' };
+const ogLocale = htmlLang ? htmlLang.replace('-', '_') : ogLocales[lang];
+const ogLocaleAlts = allLangs.filter((l) => l !== lang).map((l) => ogLocales[l]);
 
 const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
 <!doctype html>
-<html lang={htmlLang ?? lang}>
+<html lang={htmlLang ?? localeTags[lang]}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -90,7 +93,7 @@ const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <!-- Icons -->
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="theme-color" content="#060709" />
+    <meta name="theme-color" content="#0B0807" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -100,7 +103,7 @@ const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta property="og:url" content={ogUrl} />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:locale" content={ogLocale} />
-    <meta property="og:locale:alternate" content={ogLocaleAlt} />
+    {ogLocaleAlts.map((l) => <meta property="og:locale:alternate" content={l} />)}
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />

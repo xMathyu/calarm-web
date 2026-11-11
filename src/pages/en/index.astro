@@ -1,36 +1,5 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Landing from '../../components/Landing.astro';
-import { useTranslations } from '../../i18n/utils';
-
-const lang = 'en' as const;
-const t = useTranslations(lang);
-const site = (Astro.site ?? new URL('https://calarm-puce.vercel.app')).origin;
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'MobileApplication',
-  name: 'Calarmi',
-  applicationCategory: 'UtilitiesApplication',
-  operatingSystem: 'iOS 26',
-  description: t('site.description'),
-  url: `${site}/en/`,
-  image: `${site}/og-image.png`,
-  downloadUrl: 'https://apps.apple.com/app/id6772419323',
-  inLanguage: ['es', 'en'],
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-  author: { '@type': 'Organization', name: 'Mathyu Solutions', url: site },
-  publisher: { '@type': 'Organization', name: 'Mathyu Solutions', url: site },
-};
+import HomePage from '../../components/HomePage.astro';
 ---
 
-<Layout
-  lang={lang}
-  title={t('site.title')}
-  description={t('site.description')}
-  path=""
-  alternates={{ es: '', en: '' }}
-  jsonLd={jsonLd}
->
-  <Landing lang={lang} />
-</Layout>
+<HomePage lang="en" />

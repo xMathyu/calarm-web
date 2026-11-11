@@ -1,0 +1,34 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PrivacyDoc from './Privacy.astro';
+import { useTranslations, localizedPath, routes } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const site = (Astro.site ?? new URL('https://calarmi.vercel.app')).origin;
+const path = routes.privacy[lang];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Calarmi', item: `${site}${localizedPath(lang, '')}` },
+    { '@type': 'ListItem', position: 2, name: t('pv.title'), item: `${site}${localizedPath(lang, path)}` },
+  ],
+};
+---
+
+<Layout
+  lang={lang}
+  title={t('privacy.metaTitle')}
+  description={t('privacy.metaDescription')}
+  path={path}
+  alternates={routes.privacy}
+  jsonLd={jsonLd}
+>
+  <PrivacyDoc lang={lang} />
+</Layout>

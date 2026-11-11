@@ -1,15 +1,19 @@
-import { ui, defaultLang, type Lang } from './ui';
+import { ui, defaultLang, languages, type Lang, type UIKey } from './ui';
 
 /** Returns a translator bound to a locale, falling back to the default language. */
 export function useTranslations(lang: Lang) {
-  return function t(key: keyof (typeof ui)[typeof defaultLang]): string {
-    return (ui[lang] as Record<string, string>)[key] ?? ui[defaultLang][key];
+  return function t(key: UIKey): string {
+    return ui[lang][key] ?? ui[defaultLang][key] ?? key;
   };
 }
 
+/** Every locale, in menu order. */
+export const allLangs = Object.keys(languages) as Lang[];
+
 /**
- * Builds an in-site URL for the given locale (Spanish at root, English under /en).
- * Always returns a trailing-slash form to match the directory build output and sitemap.
+ * Builds an in-site URL for the given locale (Spanish at root, the rest under
+ * /<lang>). Always returns a trailing-slash form to match the directory build
+ * output and sitemap.
  */
 export function localizedPath(lang: Lang, path = ''): string {
   const clean = path.replace(/^\/+/, '');
@@ -18,15 +22,20 @@ export function localizedPath(lang: Lang, path = ''): string {
   return joined.endsWith('/') ? joined : `${joined}/`;
 }
 
-export const otherLang = (lang: Lang): Lang => (lang === 'es' ? 'en' : 'es');
-
 /** Locale-less path segment for each page, keyed by locale. */
 export const routes = {
-  home: { es: '', en: '' },
-  privacy: { es: 'privacidad', en: 'privacy' },
-} as const;
+  home: { es: '', en: '', pt: '', de: '' },
+  privacy: { es: 'privacidad', en: 'privacy', pt: 'privacidade', de: 'datenschutz' },
+} as const satisfies Record<string, Record<Lang, string>>;
+
+export type Page = keyof typeof routes;
 
 /** Full in-site href for a known page in a locale. */
-export function pageHref(page: keyof typeof routes, lang: Lang): string {
+export function pageHref(page: Page, lang: Lang): string {
   return localizedPath(lang, routes[page][lang]);
+}
+
+/** The same page in every locale, for the language menu and hreflang. */
+export function pageHrefs(page: Page): Record<Lang, string> {
+  return Object.fromEntries(allLangs.map((l) => [l, pageHref(page, l)])) as Record<Lang, string>;
 }

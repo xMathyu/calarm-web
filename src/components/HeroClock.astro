@@ -1,0 +1,69 @@
+---
+import { Image } from 'astro:assets';
+import appIcon from '../assets/images/app-icon.png';
+
+interface Props {
+  class?: string;
+}
+const { class: cls } = Astro.props;
+---
+
+<div class:list={['clock3d', cls]} data-clock3d>
+  <Image class="fallback" src={appIcon} alt="" width={360} height={360} loading="eager" />
+  <canvas aria-hidden="true"></canvas>
+</div>
+
+<script>
+  // The 3D clock is decoration: it loads after the page is interactive, and
+  // the flat icon stays when there's no WebGL or the visitor prefers less motion.
+  const root = document.querySelector<HTMLElement>('[data-clock3d]');
+  const canvas = root?.querySelector('canvas');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hasWebGL = (() => {
+    try {
+      return !!document.createElement('canvas').getContext('webgl2');
+    } catch {
+      return false;
+    }
+  })();
+  if (root && canvas && !reduce && hasWebGL) {
+    const start = () =>
+      import('../lib/clock3d')
+        .then(({ mountClock }) => mountClock(root, canvas))
+        .catch(() => root.classList.remove('live'));
+    if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 1500 });
+    else setTimeout(start, 300);
+  }
+</script>
+
+<style>
+  .clock3d {
+    position: relative;
+    aspect-ratio: 1;
+  }
+  .fallback {
+    position: absolute;
+    inset: 14%;
+    width: 72%;
+    height: 72%;
+    border-radius: 22.4%;
+    transform: rotate(-10deg);
+    box-shadow: 0 40px 100px rgba(238, 78, 27, 0.5);
+    transition: opacity 0.6s ease;
+  }
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    cursor: pointer;
+  }
+  .clock3d:global(.live) canvas {
+    opacity: 1;
+  }
+  .clock3d:global(.live) .fallback {
+    opacity: 0;
+  }
+</style>

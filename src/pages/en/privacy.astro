@@ -1,29 +1,5 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import PrivacyDoc from '../../components/Privacy.astro';
-import { useTranslations } from '../../i18n/utils';
-
-const lang = 'en' as const;
-const t = useTranslations(lang);
-const site = (Astro.site ?? new URL('https://calarm-puce.vercel.app')).origin;
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Calarmi', item: `${site}/en/` },
-    { '@type': 'ListItem', position: 2, name: t('pv.title'), item: `${site}/en/privacy/` },
-  ],
-};
+import PrivacyPage from '../../components/PrivacyPage.astro';
 ---
 
-<Layout
-  lang={lang}
-  title={t('privacy.metaTitle')}
-  description={t('privacy.metaDescription')}
-  path="privacy"
-  alternates={{ es: 'privacidad', en: 'privacy' }}
-  jsonLd={jsonLd}
->
-  <PrivacyDoc lang={lang} />
-</Layout>
+<PrivacyPage lang="en" />

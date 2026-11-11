@@ -14,12 +14,24 @@ importers:
       '@astrojs/vercel':
         specifier: ^9.0.5
         version: 9.0.5(astro@5.18.2(@types/node@24.13.2)(@vercel/functions@2.2.13)(rollup@4.61.1)(typescript@5.9.3))(rollup@4.61.1)
+      '@fontsource-variable/inter':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource-variable/nunito':
+        specifier: ^5.3.0
+        version: 5.3.0
       astro:
         specifier: ^5.7.0
         version: 5.18.2(@types/node@24.13.2)(@vercel/functions@2.2.13)(rollup@4.61.1)(typescript@5.9.3)
+      gsap:
+        specifier: ^3.15.1
+        version: 3.15.1
       sharp:
         specifier: ^0.33.5
         version: 0.33.5
+      three:
+        specifier: ^0.187.0
+        version: 0.187.0
 
 packages:
 
@@ -383,6 +395,12 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@fontsource-variable/inter@5.3.0':
+    resolution: {integrity: sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==}
+
+  '@fontsource-variable/nunito@5.3.0':
+    resolution: {integrity: sha512-tw0ch7evIDSwoeUy+0XzocYHfbRWLeCRPJy22KgbrLjDLAbNw/fErBiil10Ssrs3Sjr55zaZrr36a975j8cBkQ==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -1281,6 +1299,9 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
+  gsap@3.15.1:
+    resolution: {integrity: sha512-63yjWRFWj3QRP1UOuD8kcidCcy3nxb1mMRpwHr/xJRvPfm9GtWOXFAYUiL0ro1fgPq2nY53LR+98pAgy9BumBg==}
+
   h3@1.15.11:
     resolution: {integrity: sha512-L3THSe2MPeBwgIZVSH5zLdBBU90TOxarvhK9d04IDY2AmVS8j2Jz2LIWtwsGOU3lu2I5jCN7FNvVfY2+XyF+mg==}
 
@@ -1822,6 +1843,9 @@ packages:
     resolution: {integrity: sha512-MFO/QzvtAOmJbkhOaCTvbGcFN9L9b+JunIsDwaKljSOdcLMea3NJ1k9Usz/rjdfSXTq4dfzfeS7W4p4YOAAHeA==}
     engines: {node: '>=18'}
 
+  three@0.187.0:
+    resolution: {integrity: sha512-Qiu7R+Cmh8CstZsY1uJOSWnVlfo7ZtNLV7mF8Jltk3LB3AtDu9cRZlcnRKkAk8Y4z6KKw35z7Y7Urd7jWY8etA==}
+
   tiny-inflate@1.0.3:
     resolution: {integrity: sha512-pkY1fj1cKHb2seWDy0B16HeWyczlJA9/WW3u3c4z/NiWDsO3DOU5D7nhTLE9CF0yXv/QZFY7sEJmj24dK+Rrqw==}
 
@@ -2362,6 +2386,10 @@ snapshots:
 
   '@esbuild/win32-x64@0.27.7':
     optional: true
+
+  '@fontsource-variable/inter@5.3.0': {}
+
+  '@fontsource-variable/nunito@5.3.0': {}
 
   '@img/colour@1.1.0':
     optional: true
@@ -3197,6 +3225,8 @@ snapshots:
       path-scurry: 1.11.1
 
   graceful-fs@4.2.11: {}
+
+  gsap@3.15.1: {}
 
   h3@1.15.11:
     dependencies:
@@ -4091,6 +4121,8 @@ snapshots:
       minipass: 7.1.3
       minizlib: 3.1.0
       yallist: 5.0.0
+
+  three@0.187.0: {}
 
   tiny-inflate@1.0.3: {}
 

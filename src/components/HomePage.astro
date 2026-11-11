@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Landing from './Landing.astro';
+import { landing } from '../i18n/landing';
+import { allLangs, localizedPath, routes } from '../i18n/utils';
+import { localeTags, type Lang } from '../i18n/ui';
+import { APP_STORE_URL } from '../lib/appStore';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const copy = landing[lang];
+const site = (Astro.site ?? new URL('https://calarmi.vercel.app')).origin;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'MobileApplication',
+  name: 'Calarmi',
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'iOS 26',
+  description: copy.meta.description,
+  url: `${site}${localizedPath(lang, '')}`,
+  image: `${site}/og-image.png`,
+  downloadUrl: APP_STORE_URL,
+  inLanguage: allLangs.map((l) => localeTags[l]),
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  author: { '@type': 'Organization', name: 'Mathyu Solutions', url: site },
+  publisher: { '@type': 'Organization', name: 'Mathyu Solutions', url: site },
+};
+---
+
+<Layout lang={lang} title={copy.meta.title} description={copy.meta.description} path="" alternates={routes.home} jsonLd={jsonLd}>
+  <Landing lang={lang} />
+</Layout>

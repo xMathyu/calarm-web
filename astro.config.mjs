@@ -13,9 +13,9 @@ export default defineConfig({
   trailingSlash: 'always',
   i18n: {
     defaultLocale: 'es',
-    locales: ['es', 'en'],
+    locales: ['es', 'en', 'pt', 'de'],
     routing: {
-      // Spanish lives at the root (/) and English under /en — no prefix for the default.
+      // Spanish lives at the root (/), the rest under /en, /pt and /de.
       prefixDefaultLocale: false,
       redirectToDefaultLocale: true,
     },
@@ -24,7 +24,7 @@ export default defineConfig({
     sitemap({
       i18n: {
         defaultLocale: 'es',
-        locales: { es: 'es-ES', en: 'en-US' },
+        locales: { es: 'es-ES', en: 'en-US', pt: 'pt-BR', de: 'de-DE' },
       },
     }),
   ],

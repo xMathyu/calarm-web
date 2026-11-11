@@ -5,17 +5,17 @@
    ============================================================ */
 
 :root{
-  --bg:        #060709;
-  --bg-2:      #0b0d11;
-  --bg-3:      #111318;
-  --card:      #16181d;
-  --card-2:    #1d2026;
+  --bg:        #0b0807;
+  --bg-2:      #110c0a;
+  --bg-3:      #1a1311;
+  --card:      #16110f;
+  --card-2:    #1e1714;
   --hair:      rgba(255,255,255,.08);
   --hair-2:    rgba(255,255,255,.14);
 
-  --ink:       #ffffff;
-  --muted:     #a2a4ab;
-  --dim:       #6c6e76;
+  --ink:       #fff7f2;
+  --muted:     #c7bbb4;
+  --dim:       #9a8d86;
 
   --accent:    #f16826;
   --accent-2:  #ff8a4c;
@@ -29,8 +29,9 @@
   --r-xs: 10px; --r-sm: 14px; --r-md: 20px; --r-lg: 28px; --r-xl: 40px;
   --maxw: 1160px;
 
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+  --font: "Inter Variable", -apple-system, BlinkMacSystemFont, "SF Pro Text",
           "Helvetica Neue", Helvetica, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Nunito Variable", "Inter Variable", -apple-system, sans-serif;
 }
 
 *{ box-sizing:border-box; margin:0; padding:0; }
@@ -56,7 +57,7 @@ img{ display:block; max-width:100%; }
   font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
   color:var(--accent-2);
 }
-h1,h2,h3{ letter-spacing:-.02em; line-height:1.04; font-weight:800; }
+h1,h2,h3{ font-family:var(--font-display); letter-spacing:-.03em; line-height:1.02; font-weight:900; }
 .grad{
   background:var(--grad-text);
   -webkit-background-clip:text; background-clip:text; color:transparent;

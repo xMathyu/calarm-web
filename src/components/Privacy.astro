@@ -1,8 +1,8 @@
 ---
 import { Image } from 'astro:assets';
 import appIcon from '../assets/images/app-icon.png';
-import LangToggle from './LangToggle.astro';
-import { useTranslations, pageHref } from '../i18n/utils';
+import LangMenu from './LangMenu.astro';
+import { useTranslations, pageHref, pageHrefs } from '../i18n/utils';
 import type { Lang } from '../i18n/ui';
 
 interface Props {
@@ -12,8 +12,7 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 
 const homeHref = pageHref('home', lang);
-const esHref = pageHref('privacy', 'es');
-const enHref = pageHref('privacy', 'en');
+const langHrefs = pageHrefs('privacy');
 ---
 
 <nav class="nav">
@@ -22,7 +21,7 @@ const enHref = pageHref('privacy', 'en');
       <Image src={appIcon} alt="Calarmi" width={64} height={64} loading="eager" /> Calarmi
     </a>
     <div class="spacer"></div>
-    <LangToggle lang={lang} esHref={esHref} enHref={enHref} />
+    <LangMenu lang={lang} hrefs={langHrefs} label={t('nav.language')} />
     <a href={homeHref} class="back">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
       <span>{t('pv.back')}</span>

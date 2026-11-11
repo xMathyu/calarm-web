@@ -1,0 +1,120 @@
+---
+import { languages, localeTags, type Lang } from '../i18n/ui';
+import { allLangs } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  /** The current page in every locale. */
+  hrefs: Record<Lang, string>;
+  /** "Idioma" / "Language", for screen readers. */
+  label: string;
+}
+const { lang, hrefs, label } = Astro.props;
+---
+
+<details class="lang" data-lang-menu>
+  <summary aria-label={`${label}: ${languages[lang]}`}>
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.8 3.8 5.8 3.8 9s-1.3 6.2-3.8 9c-2.5-2.8-3.8-5.8-3.8-9S9.5 5.8 12 3Z"></path></svg>
+    <span>{lang.toUpperCase()}</span>
+    <svg class="chev" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"></path></svg>
+  </summary>
+  <ul>
+    {
+      allLangs.map((l) => (
+        <li>
+          <a href={hrefs[l]} hreflang={localeTags[l]} lang={localeTags[l]} aria-current={l === lang ? 'true' : undefined}>
+            <span class="code">{l.toUpperCase()}</span>
+            {languages[l]}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</details>
+
+<script>
+  // Close the menu on an outside click or Escape (native <details> doesn't).
+  document.querySelectorAll<HTMLDetailsElement>('[data-lang-menu]').forEach((menu) => {
+    document.addEventListener('click', (e) => {
+      if (menu.open && !menu.contains(e.target as Node)) menu.open = false;
+    });
+    menu.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      }
+    });
+  });
+</script>
+
+<style>
+  .lang {
+    position: relative;
+  }
+  summary {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 44px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid var(--hair-2);
+    background: var(--card);
+    color: var(--ink);
+    font: 650 14px var(--font);
+    cursor: pointer;
+    user-select: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary svg {
+    width: 16px;
+    height: 16px;
+  }
+  summary .chev {
+    width: 12px;
+    height: 12px;
+    transition: transform 0.2s;
+  }
+  .lang[open] summary .chev {
+    transform: rotate(180deg);
+  }
+  ul {
+    list-style: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 190px;
+    padding: 6px;
+    border-radius: 18px;
+    background: rgba(30, 23, 20, 0.97);
+    border: 1px solid var(--hair-2);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+    z-index: 60;
+  }
+  a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 12px;
+    color: var(--ink);
+    font-weight: 550;
+    font-size: 15px;
+  }
+  a:hover {
+    background: var(--card-2);
+  }
+  a[aria-current] {
+    color: var(--accent-2);
+  }
+  .code {
+    width: 28px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dim);
+  }
+</style>
