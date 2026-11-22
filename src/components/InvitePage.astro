@@ -15,29 +15,33 @@
  */
 import Layout from '../layouts/Layout.astro';
 import {
+  appSegment,
   daysUntil,
   formatCountdownDay,
   formatDay,
   formatTime,
   formatWhen,
-  PHOTO_PARAM,
   type InvitePayload,
 } from '../lib/invite';
 import { ALARM_CLOCK_GLYPH, HOURGLASS_GLYPH, glyphFor } from '../lib/icons';
 import { APP_STORE_URL, APP_STORE_ID } from '../lib/appStore';
 
 interface Props {
-  /** The decoded link, or null for a malformed one. */
+  /** The invitation, or null for a malformed or withdrawn one. */
   invite: InvitePayload | null;
   /** The link's raw data segment, passed on to the card and the app. */
   data: string;
   /** Which door the link came through: `i` alarms, `c` countdowns. */
   path: 'i' | 'c';
-  /** The photo carried in `?f=`, already validated. */
+  /** The alarm's photo, already validated. */
   photo?: Buffer;
+  /** Query string for the card's URL (see `LoadedInvite.cardQuery`). */
+  cardQuery: string;
+  /** CloudKit didn't answer: show a generic invitation, not an error. */
+  unavailable?: boolean;
 }
 
-const { invite, data, path, photo } = Astro.props;
+const { invite, data, path, photo, cardQuery, unavailable = false } = Astro.props;
 const isCountdown = path === 'c';
 
 const lang = invite?.l ?? 'es';
@@ -61,6 +65,8 @@ const pt = {
   badTitle: 'Este convite não é mais válido',
   badBody: 'O link está incompleto ou foi modificado. Peça para quem te convidou enviar de novo.',
   badCta: 'Conhecer o Calarmi',
+  waitTitle: 'Você recebeu um convite para o Calarmi',
+  waitBody: 'Não conseguimos carregar os detalhes agora. Se você já tem o Calarmi, abra o convite nele.',
   today: 'Hoje!',
   unit: (n: number) => (n === 1 ? 'dia' : 'dias'),
   ago: (n: number) => (n === 1 ? 'dia atrás' : 'dias atrás'),
@@ -88,6 +94,8 @@ const copy =
         badTitle: 'This invitation is no longer valid',
         badBody: 'The link is incomplete or has been modified. Ask whoever invited you to send it again.',
         badCta: 'Learn about Calarmi',
+        waitTitle: "You've been invited to Calarmi",
+        waitBody: "We couldn't load the details right now. If you already have Calarmi, open the invitation there.",
         today: 'Today!',
         unit: (n: number) => (n === 1 ? 'day left' : 'days left'),
         ago: (n: number) => (n === 1 ? 'day ago' : 'days ago'),
@@ -110,6 +118,8 @@ const copy =
         badTitle: 'Esta invitación ya no es válida',
         badBody: 'El enlace está incompleto o se ha modificado. Pídele a quien te invitó que te lo mande otra vez.',
         badCta: 'Conocer Calarmi',
+        waitTitle: 'Te invitaron a Calarmi',
+        waitBody: 'No pudimos cargar los detalles ahora mismo. Si ya tienes Calarmi, abre la invitación en ella.',
         today: '¡Hoy!',
         unit: (n: number) => (n === 1 ? 'día' : 'días'),
         ago: (n: number) => (n === 1 ? 'día atrás' : 'días atrás'),
@@ -121,24 +131,31 @@ const counterNumber = days === 0 ? '' : String(Math.abs(days));
 const counterUnit = days === 0 ? copy.today : days > 0 ? copy.unit(days) : copy.ago(-days);
 const countdownLine = days === 0 ? copy.today : `${Math.abs(days)} ${counterUnit}`;
 
-const title = invite ? invite.t : copy.badTitle;
+const title = invite ? invite.t : unavailable ? copy.waitTitle : copy.badTitle;
 const description = invite
   ? copy.description(isCountdown ? `${countdownLine} · ${formatCountdownDay(invite)}` : formatWhen(invite))
+  : unavailable
+  ? copy.waitBody
   : copy.badBody;
+// The app can still open the link while its details can't be read.
+const canOpenApp = invite !== null || unavailable;
 
 // Built from `site` rather than `Astro.url.href`: on Vercel the request URL's
 // host arrives as `localhost`.
 // El app-argument del banner usa SIEMPRE el host antiguo: es el único que conocen todas
 // las versiones de la app (las anteriores a la 1.0.17 solo aceptan ese en `applinks:` y en
 // `InviteLink`), así que no puede seguir al dominio canónico de la web.
+// Por lo mismo, la app recibe la invitación en JSON aunque el enlace sea solo el token del
+// share (`appSegment`): las versiones anteriores a la 1.0.18 no saben leer el token.
 const INVITE_ORIGIN = 'https://calarm-puce.vercel.app';
-const inviteUrl = new URL(Astro.url.pathname, INVITE_ORIGIN).href;
+const appData = invite ? appSegment(invite, data) : data;
+const inviteUrl = new URL(`/${path}/${appData}/`, INVITE_ORIGIN).href;
 const appBanner = `app-id=${APP_STORE_ID}, app-argument=${inviteUrl}`;
 
 // Second door into the app. A universal link can't be triggered from a page on
 // the very domain it belongs to — iOS deliberately ignores that — so "I already
 // have Calarmi" has to go through the custom scheme instead.
-const appSchemeUrl = `calarm://${path}/${data}/`;
+const appSchemeUrl = `calarm://${path}/${appData}/`;
 
 // The tile shows the alarm's own icon when it isn't an emoji: the look-alike
 // of the sender's SF Symbol, or the alarm clock (an hourglass for a countdown)
@@ -149,7 +166,6 @@ const glyph = invite ? (glyphFor(invite.y) ?? fallbackGlyph) : fallbackGlyph;
 // The photo, when the link carries one: it fills the tile here and on the
 // preview card, which gets it through the same query parameter.
 const photoSrc = photo ? `data:image/jpeg;base64,${photo.toString('base64')}` : undefined;
-const cardQuery = photo ? `?${PHOTO_PARAM}=${photo.toString('base64url')}` : '';
 ---
 
 <Layout
@@ -209,8 +225,8 @@ const cardQuery = photo ? `?${PHOTO_PARAM}=${photo.toString('base64url')}` : '';
           </>
         ) : (
           <>
-            <h1 class="bad">{copy.badTitle}</h1>
-            <p class="day">{copy.badBody}</p>
+            <h1 class="bad">{unavailable ? copy.waitTitle : copy.badTitle}</h1>
+            <p class="day">{unavailable ? copy.waitBody : copy.badBody}</p>
           </>
         )
       }
@@ -223,13 +239,13 @@ const cardQuery = photo ? `?${PHOTO_PARAM}=${photo.toString('base64url')}` : '';
             ></path></svg
           >
           <span
-            ><span class="l1">{invite ? copy.storeLine1 : ''}</span><br /><span class="l2"
-              >{invite ? 'App Store' : copy.badCta}</span
+            ><span class="l1">{canOpenApp ? copy.storeLine1 : ''}</span><br /><span class="l2"
+              >{canOpenApp ? 'App Store' : copy.badCta}</span
             ></span
           >
         </a>
 
-        {invite && <a class="open-app" href={appSchemeUrl}>{copy.openApp}</a>}
+        {canOpenApp && <a class="open-app" href={appSchemeUrl}>{copy.openApp}</a>}
       </div>
 
       {invite && <p class="pitch">{copy.pitch}</p>}

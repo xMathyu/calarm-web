@@ -1,20 +1,41 @@
 /**
  * Invitation links — the shared contract between the iOS app and this site.
  *
- * The whole invitation travels *inside the URL*: there is no database and
- * nothing is stored server-side. The app base64url-encodes a small JSON payload
- * and appends it as a path segment (`/i/<data>/`); this module decodes it again
- * so the page can render the preview card.
+ * The link's data segment (`/i/<data>/`, `/c/<data>/`) comes in two shapes:
+ * - The CloudKit share token (app 1.0.18+), e.g. `/c/07628shg9cGxsh2Moi-46rp9A/`.
+ *   The invitation itself is read from CloudKit, see `cloudkit.ts`.
+ * - JSON (older links, and the app's fallback): the whole invitation as
+ *   base64url JSON, decoded here by `decodeInvite`. Links already sent use it,
+ *   so it must keep decoding forever.
  *
- * Keep `Version` and the field names in sync with `InviteLink.swift` in the iOS
- * app — they are the same wire format, written twice.
+ * Either way nothing is stored on this site. Keep both in sync with
+ * `InviteLink.swift` in the iOS app — it is the same contract, written twice.
  */
 
-/** Bumped only on a breaking change; older links must keep decoding. */
+/** Version of the JSON links. Bumped only on a breaking change. */
 export const INVITE_VERSION = 1;
+
+/** `v` of an invitation read from CloudKit through a share-token link. */
+export const SHARE_LINK_VERSION = 2;
 
 /** Only CloudKit share links may be carried, see `decodeInvite`. */
 const SHARE_URL_PREFIX = 'https://www.icloud.com/share/';
+
+/**
+ * A CloudKit share token, as share-token links carry it (same rule as the app).
+ * A JSON segment is never this short, so the length tells the shapes apart.
+ */
+const SHARE_TOKEN = /^[A-Za-z0-9_-]{10,64}$/;
+
+/** True when a link's data segment is a share token rather than JSON. */
+export function isShareToken(segment: string | undefined): segment is string {
+  return segment !== undefined && SHARE_TOKEN.test(segment);
+}
+
+/** The share URL a token stands for. Its alphabet can't leave iCloud's prefix. */
+export function shareURLForToken(token: string): string {
+  return SHARE_URL_PREFIX + token;
+}
 
 export interface InvitePayload {
   /** Wire format version. */
@@ -78,6 +99,15 @@ export function decodeInvite(data: string | undefined): InvitePayload | null {
 
   const p = parsed as Partial<InvitePayload>;
   if (p.v !== INVITE_VERSION) return null;
+  return cleanInvite(p);
+}
+
+/**
+ * Checks and trims an invitation, wherever it came from (a JSON link or
+ * CloudKit): both are written by whoever sent the link, so neither is trusted.
+ */
+export function cleanInvite(p: Partial<InvitePayload>): InvitePayload | null {
+  if (typeof p.v !== 'number') return null;
   if (typeof p.t !== 'string' || p.t.trim() === '') return null;
   if (typeof p.d !== 'string' || Number.isNaN(Date.parse(p.d))) return null;
   if (typeof p.s !== 'string' || !p.s.startsWith(SHARE_URL_PREFIX)) return null;
@@ -100,6 +130,37 @@ export function decodeInvite(data: string | undefined): InvitePayload | null {
     k: p.k === 'c' ? 'c' : undefined,
     h: p.h === true ? true : p.h === false ? false : undefined,
   };
+}
+
+/**
+ * ISO-8601 without milliseconds — the only shape the app's `JSONDecoder`
+ * (`.iso8601`) accepts, see `appSegment`.
+ */
+export function isoInstant(ms: number): string {
+  return new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z');
+}
+
+/**
+ * The segment to hand to the app itself (the "I already have Calarmi" button
+ * and the Smart App Banner). Versions before 1.0.18 only read JSON links, so an
+ * invitation read from CloudKit goes back as JSON; a JSON link goes through
+ * untouched.
+ */
+export function appSegment(payload: InvitePayload, data: string): string {
+  if (payload.v === INVITE_VERSION) return data;
+  return encodeInvite({
+    v: INVITE_VERSION,
+    t: payload.t,
+    d: payload.d,
+    tz: payload.tz,
+    l: payload.l,
+    c: payload.c,
+    e: payload.e,
+    y: payload.y,
+    s: payload.s,
+    k: payload.k,
+    h: payload.h,
+  });
 }
 
 /** The query parameter that carries the alarm's photo, see `decodePhoto`. */
@@ -127,7 +188,7 @@ export function decodePhoto(value: string | null | undefined): Buffer | undefine
 }
 
 /** True when `tz` is a zone this runtime actually knows. */
-function isValidTimeZone(tz: string | undefined): tz is string {
+export function isValidTimeZone(tz: string | undefined): tz is string {
   if (!tz) return false;
   try {
     new Intl.DateTimeFormat('en', { timeZone: tz });

@@ -9,22 +9,27 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { decodeInvite, decodePhoto, PHOTO_PARAM } from '../../lib/invite';
+import { isShareToken } from '../../lib/invite';
+import { loadInvite } from '../../lib/loadInvite';
 import { renderCard } from '../../lib/card';
 
 export const GET: APIRoute = async ({ params, url }) => {
   // An unreadable segment still returns a valid image: a broken preview looks
   // worse to the recipient than a generic one.
-  const invite = decodeInvite(params.data);
-  const photo = invite ? decodePhoto(url.searchParams.get(PHOTO_PARAM)) : undefined;
-  const png = await renderCard(invite, photo);
+  const loaded = await loadInvite(params.data, url);
+  const png = await renderCard(loaded.invite, loaded.photo);
+
+  // The URL is the cache key. A JSON link's card is a pure function of it, and
+  // so is a token link's once the page adds the record's change tag (`?v=`).
+  // Without the tag it may change; while CloudKit is down it's a placeholder.
+  const fixed = !isShareToken(params.data) || (loaded.invite && url.searchParams.has('v'));
+  const cacheControl = loaded.unavailable
+    ? 'no-store'
+    : fixed
+      ? 'public, max-age=31536000, immutable'
+      : 'public, max-age=0, s-maxage=60';
 
   return new Response(new Uint8Array(png), {
-    headers: {
-      'Content-Type': 'image/png',
-      // The URL (payload + photo) is the cache key, and the output is a pure
-      // function of it.
-      'Cache-Control': 'public, max-age=31536000, immutable',
-    },
+    headers: { 'Content-Type': 'image/png', 'Cache-Control': cacheControl },
   });
 };

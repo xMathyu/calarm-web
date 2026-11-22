@@ -1,24 +1,35 @@
 ---
 /**
- * An invitation to an alarm: `/i/<data>/`, as `InviteLink.swift` builds it.
- * The page itself is `components/InvitePage.astro`; this route decodes the
- * link and sets the status. Rendered per request — every invitation differs.
+ * An invitation to an alarm: `/i/<data>/`, as `InviteLink.swift` builds it —
+ * the share token (the invitation is read from CloudKit) or, in older links,
+ * the whole invitation as JSON. See `lib/loadInvite.ts`.
+ * The page itself is `components/InvitePage.astro`; this route loads the
+ * invitation and sets the status. Rendered per request.
  */
 export const prerender = false;
 
 import InvitePage from '../../components/InvitePage.astro';
-import { decodeInvite, decodePhoto, PHOTO_PARAM } from '../../lib/invite';
+import { loadInvite } from '../../lib/loadInvite';
 
-const decoded = decodeInvite(Astro.params.data);
-// A countdown payload belongs under `/c/`; an alarm page never draws one.
-const invite = decoded && decoded.k !== 'c' ? decoded : null;
+const loaded = await loadInvite(Astro.params.data, Astro.url);
+// A countdown belongs under `/c/`; an alarm page never draws one.
+const invite = loaded.invite && loaded.invite.k !== 'c' ? loaded.invite : null;
 
-// A malformed or tampered link still deserves a real page, not a 500.
-if (!invite) {
+// A malformed, tampered or withdrawn link still deserves a real page, not a
+// 500. One CloudKit couldn't answer for gets a generic invitation instead.
+if (!invite && !loaded.unavailable) {
   Astro.response.status = 404;
 }
-
-const photo = invite ? decodePhoto(Astro.url.searchParams.get(PHOTO_PARAM)) : undefined;
+if (loaded.cacheControl) {
+  Astro.response.headers.set('Cache-Control', loaded.cacheControl);
+}
 ---
 
-<InvitePage invite={invite} data={Astro.params.data ?? ''} path="i" photo={photo} />
+<InvitePage
+  invite={invite}
+  data={Astro.params.data ?? ''}
+  path="i"
+  photo={invite ? loaded.photo : undefined}
+  cardQuery={loaded.cardQuery}
+  unavailable={loaded.unavailable}
+/>

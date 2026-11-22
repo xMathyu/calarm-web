@@ -13,3 +13,5 @@ npm-debug.log*
 .env.production
 # macOS
 .DS_Store
+.vercel
+.env*
