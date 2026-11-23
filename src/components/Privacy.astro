@@ -3,13 +3,43 @@ import { Image } from 'astro:assets';
 import appIcon from '../assets/images/app-icon.png';
 import LangMenu from './LangMenu.astro';
 import { useTranslations, pageHref, pageHrefs } from '../i18n/utils';
-import type { Lang } from '../i18n/ui';
+import type { Lang, UIKey } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+
+/** iPhone table rows: data type, use, and whether it's linked to you. Tracking is always "No". */
+const iosRows: [UIKey, UIKey, boolean][] = [
+  ['pv.r1c1', 'pv.r1c2', false],
+  ['pv.r2c1', 'pv.r2c2', false],
+  ['pv.r4c1', 'pv.r4c2', true],
+  ['pv.r5c1', 'pv.r5c2', true],
+  ['pv.r6c1', 'pv.r6c2', true],
+  ['pv.r7c1', 'pv.r7c2', true],
+];
+
+/** Android table rows: data type, use, and whether it leaves the phone. Tracking is always "No". */
+const androidRows: [UIKey, UIKey, UIKey][] = [
+  ['pv.and_r1c1', 'pv.and_r1c2', 'pv.and_c3_backup'],
+  ['pv.and_r2c1', 'pv.and_r2c2', 'pv.no'],
+  ['pv.and_r3c1', 'pv.and_r3c2', 'pv.no'],
+  ['pv.and_r4c1', 'pv.and_r4c2', 'pv.no'],
+  ['pv.and_r5c1', 'pv.and_r5c2', 'pv.and_c3_google'],
+  ['pv.and_r6c1', 'pv.and_r6c2', 'pv.and_c3_play'],
+  ['pv.and_r7c1', 'pv.and_r7c2', 'pv.and_c3_fb'],
+  ['pv.and_r8c1', 'pv.and_r8c2', 'pv.and_c3_fb'],
+  ['pv.and_r9c1', 'pv.and_r9c2', 'pv.and_c3_fb'],
+  ['pv.and_r10c1', 'pv.and_r10c2', 'pv.and_c3_fb'],
+];
+/** "Leaves the phone" cells that read as a no, dimmed like the iPhone table's. */
+const staysOnPhone = new Set<UIKey>(['pv.no', 'pv.and_c3_backup']);
+
+const sharedItems: UIKey[] = ['pv.s4_li1', 'pv.s4_li2', 'pv.s4_li3', 'pv.s4_li4'];
+const androidPermissions: UIKey[] = ['pv.and_perm_li1', 'pv.and_perm_li2', 'pv.and_perm_li3', 'pv.and_perm_li4', 'pv.and_perm_li5'];
+const deleteSteps: UIKey[] = ['pv.del_li1', 'pv.del_li2', 'pv.del_li3'];
 
 const homeHref = pageHref('home', lang);
 const langHrefs = pageHrefs('privacy');
@@ -56,6 +86,8 @@ const langHrefs = pageHrefs('privacy');
     <p set:html={t('pv.s1b_p')} />
     <h3>{t('pv.s1c_h')}</h3>
     <p>{t('pv.s1c_p')}</p>
+    <h3>{t('pv.s1d_h')}</h3>
+    <p>{t('pv.s1d_p')}</p>
   </section>
 
   <section id="practices">
@@ -67,8 +99,9 @@ const langHrefs = pageHrefs('privacy');
           <tr><th>{t('pv.th1')}</th><th>{t('pv.th2')}</th><th>{t('pv.th3')}</th><th>{t('pv.th4')}</th></tr>
         </thead>
         <tbody>
-          <tr><td>{t('pv.r1c1')}</td><td>{t('pv.r1c2')}</td><td class="no">{t('pv.no')}</td><td class="no">{t('pv.no')}</td></tr>
-          <tr><td>{t('pv.r2c1')}</td><td>{t('pv.r2c2')}</td><td class="no">{t('pv.no')}</td><td class="no">{t('pv.no')}</td></tr>
+          {iosRows.map(([type, use, linked]) => (
+            <tr><td>{t(type)}</td><td>{t(use)}</td><td class={linked ? undefined : 'no'}>{t(linked ? 'pv.yes' : 'pv.no')}</td><td class="no">{t('pv.no')}</td></tr>
+          ))}
           <tr><td>{t('pv.r3c1')}</td><td class="no">{t('pv.r3c2')}</td><td class="no">{t('pv.no')}</td><td class="no">{t('pv.no')}</td></tr>
         </tbody>
       </table>
@@ -86,6 +119,55 @@ const langHrefs = pageHrefs('privacy');
   <section id="sharing">
     <h2 class="sh">{t('pv.s4_h')}</h2>
     <p>{t('pv.s4_p')}</p>
+    <ul class="list">
+      {sharedItems.map((key) => <li set:html={t(key)} />)}
+    </ul>
+    <p set:html={t('pv.s4_p2')} />
+    <p set:html={t('pv.s4_p3')} />
+  </section>
+
+  <section id="android">
+    <h2 class="sh">{t('pv.and_h')}</h2>
+    <p>{t('pv.and_p')}</p>
+    <h3>{t('pv.and_store_h')}</h3>
+    <p>{t('pv.and_store_p')}</p>
+    <h3>{t('pv.and_perm_h')}</h3>
+    <p>{t('pv.and_perm_p')}</p>
+    <ul class="list">
+      {androidPermissions.map((key) => <li set:html={t(key)} />)}
+    </ul>
+    <h3>{t('pv.and_ai_h')}</h3>
+    <p>{t('pv.and_ai_p')}</p>
+    <h3>{t('pv.and_diag_h')}</h3>
+    <p set:html={t('pv.and_diag_p')} />
+    <h3>{t('pv.and_backup_h')}</h3>
+    <p>{t('pv.and_backup_p')}</p>
+    <h3>{t('pv.and_buy_h')}</h3>
+    <p set:html={t('pv.and_buy_p')} />
+    <h3>{t('pv.and_not_h')}</h3>
+    <p>{t('pv.and_not_p')}</p>
+    <h3>{t('pv.and_tbl_h')}</h3>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr><th>{t('pv.th1')}</th><th>{t('pv.th2')}</th><th>{t('pv.and_th3')}</th><th>{t('pv.th4')}</th></tr>
+        </thead>
+        <tbody>
+          {androidRows.map(([type, use, leaves]) => (
+            <tr><td>{t(type)}</td><td>{t(use)}</td><td class={staysOnPhone.has(leaves) ? 'no' : undefined}>{t(leaves)}</td><td class="no">{t('pv.no')}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="delete-data">
+    <h2 class="sh">{t('pv.del_h')}</h2>
+    <p>{t('pv.del_p')}</p>
+    <ol class="steps">
+      {deleteSteps.map((key) => <li set:html={t(key)} />)}
+    </ol>
+    <p>{t('pv.del_device_p')}</p>
   </section>
 
   <section id="children">
@@ -254,9 +336,70 @@ const langHrefs = pageHrefs('privacy');
     line-height: 1.7;
     margin-bottom: 14px;
   }
-  .doc p :global(strong) {
+  .doc p :global(strong),
+  .doc li :global(strong) {
     color: var(--ink);
     font-weight: 650;
+  }
+  .doc p :global(a),
+  .doc li :global(a) {
+    color: var(--accent-2);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .list {
+    list-style: disc;
+    padding-left: 22px;
+    margin: 4px 0 18px;
+    display: grid;
+    gap: 10px;
+  }
+  .list li,
+  .steps li {
+    color: var(--muted);
+    font-size: 16.5px;
+    line-height: 1.7;
+  }
+  .list li {
+    padding-left: 4px;
+  }
+  .list li::marker {
+    color: var(--accent-2);
+  }
+
+  /* Deletion steps: numbered cards so the section stands out. */
+  .steps {
+    list-style: none;
+    counter-reset: step;
+    display: grid;
+    gap: 12px;
+    margin: 6px 0 18px;
+  }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--hair);
+    border-radius: var(--r-md);
+    padding: 18px 22px 18px 62px;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 20px;
+    top: 19px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(241, 104, 38, 0.15);
+    color: var(--accent-2);
+    font-weight: 750;
+    font-size: 15px;
+    display: grid;
+    place-items: center;
   }
 
   /* Lets the table scroll horizontally instead of cramping on narrow phones. */
