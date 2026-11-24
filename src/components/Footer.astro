@@ -4,6 +4,7 @@ import appIcon from '../assets/images/app-icon.png';
 import { useTranslations, allLangs, pageHref } from '../i18n/utils';
 import { landing } from '../i18n/landing';
 import { help } from '../i18n/help';
+import { beta } from '../i18n/beta';
 import { languages, localeTags, type Lang } from '../i18n/ui';
 import { APP_STORE_URL } from '../lib/appStore';
 
@@ -35,6 +36,7 @@ const copy = landing[lang];
           <a href={`${homeHref}#features`}>{t('foot.features')}</a>
           <a href={`${homeHref}#pricing`}>{t('nav.pricing')}</a>
           <a href={APP_STORE_URL} target="_blank" rel="noopener">App Store</a>
+          <a href={pageHref('beta', lang)}>{beta[lang].footLink}</a>
         </div>
         <div class="foot-col">
           <h2>{t('foot.support')}</h2>

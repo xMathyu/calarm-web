@@ -27,6 +27,7 @@ export const routes = {
   home: { es: '', en: '', pt: '', de: '' },
   privacy: { es: 'privacidad', en: 'privacy', pt: 'privacidade', de: 'datenschutz' },
   help: { es: 'ayuda', en: 'help', pt: 'ajuda', de: 'hilfe' },
+  beta: { es: 'beta', en: 'beta', pt: 'beta', de: 'beta' },
 } as const satisfies Record<string, Record<Lang, string>>;
 
 export type Page = keyof typeof routes;
