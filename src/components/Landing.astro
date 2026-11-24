@@ -6,8 +6,8 @@ import Footer from './Footer.astro';
 import Phone from './Phone.astro';
 import HeroClock from './HeroClock.astro';
 import StoreButton from './StoreButton.astro';
+import AndroidBetaButton from './AndroidBetaButton.astro';
 import { landing } from '../i18n/landing';
-import { beta } from '../i18n/beta';
 import { pageHref, pageHrefs } from '../i18n/utils';
 import { shot } from '../lib/shots';
 import type { Lang } from '../i18n/ui';
@@ -38,6 +38,7 @@ const homeHrefs = pageHrefs('home');
         <p class="sub" data-hero-fade>{c.hero.sub}</p>
         <div class="ctas" data-hero-fade>
           <StoreButton line1={c.hero.storeLine1} />
+          <AndroidBetaButton lang={lang} />
           <a class="ghost" href="#features">
             {c.hero.secondary}
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"></path></svg>
@@ -212,11 +213,10 @@ const homeHrefs = pageHrefs('home');
         </div>
         <h2>{c.cta.title}</h2>
         <p>{c.cta.sub}</p>
-        <StoreButton line1={c.hero.storeLine1} />
-        <a class="android" href={pageHref('beta', lang)}>
-          {beta[lang].ctaLink}
-          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-        </a>
+        <div class="final-ctas">
+          <StoreButton line1={c.hero.storeLine1} />
+          <AndroidBetaButton lang={lang} />
+        </div>
       </div>
     </div>
   </section>
@@ -769,22 +769,11 @@ const homeHrefs = pageHrefs('home');
     color: var(--muted);
     font-size: 18px;
   }
-  .final .android {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 44px;
-    color: var(--muted);
-    font-size: 15px;
-    font-weight: 600;
-    transition: color 0.2s;
-  }
-  .final .android:hover {
-    color: var(--ink);
-  }
-  .final .android svg {
-    width: 16px;
-    height: 16px;
+  .final-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
   }
 
   /* ---------- responsive ---------- */

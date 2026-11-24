@@ -1,0 +1,71 @@
+---
+// Sibling of StoreButton for Android: same size and shape, but dark, so the
+// App Store stays the main button and the closed test reads as the second way in.
+import { beta } from '../i18n/beta';
+import { pageHref } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  class?: string;
+}
+const { lang, class: cls } = Astro.props;
+const { l1, l2 } = beta[lang].button;
+---
+
+<a class:list={['android-beta', cls]} href={pageHref('beta', lang)}>
+  <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="m17.6 9.48 1.84-3.18a.63.63 0 0 0-.26-.85.64.64 0 0 0-.83.22l-1.88 3.24a11.46 11.46 0 0 0-8.94 0L5.65 5.67a.64.64 0 0 0-.87-.2.64.64 0 0 0-.22.83L6.4 9.48A10.78 10.78 0 0 0 1 18h22a10.78 10.78 0 0 0-5.4-8.52ZM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Z"></path></svg>
+  <span class="txt"><span class="l1">{l1}</span><span class="l2">{l2}</span></span>
+  <span class="tag">Beta</span>
+</a>
+
+<style>
+  .android-beta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 60px;
+    padding: 0 18px 0 20px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #fff;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+  .android-beta:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 122, 61, 0.6);
+  }
+  svg {
+    width: 26px;
+    height: 26px;
+    color: #3ddc84;
+  }
+  .txt {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+    text-align: left;
+  }
+  .l1 {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .l2 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .tag {
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(255, 122, 61, 0.18);
+    color: #ffb48a;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+</style>

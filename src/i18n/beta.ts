@@ -32,8 +32,8 @@ export interface BetaCopy {
   iphoneA: string;
   /** Link to this page from the footer. */
   footLink: string;
-  /** Link to this page under the landing's final App Store button. */
-  ctaLink: string;
+  /** The landing's button to this page, next to the App Store one (hero and final section). */
+  button: { l1: string; l2: string };
 }
 
 const mail = `<a href="mailto:${SUPPORT_EMAIL}?subject=Calarmi%20Android%20beta">${SUPPORT_EMAIL}</a>`;
@@ -86,7 +86,7 @@ const es: BetaCopy = {
   iphoneQ: '¿Tienes iPhone?',
   iphoneA: 'Calarmi ya está en el App Store: no necesitas unirte a nada.',
   footLink: 'Beta para Android',
-  ctaLink: '¿Tienes Android? Únete a la beta',
+  button: { l1: '¿Tienes Android?', l2: 'Únete a la beta' },
 };
 
 const en: BetaCopy = {
@@ -137,7 +137,7 @@ const en: BetaCopy = {
   iphoneQ: 'Have an iPhone?',
   iphoneA: 'Calarmi is already on the App Store: no need to join anything.',
   footLink: 'Android beta',
-  ctaLink: 'On Android? Join the beta',
+  button: { l1: 'On Android?', l2: 'Join the beta' },
 };
 
 const pt: BetaCopy = {
@@ -188,7 +188,7 @@ const pt: BetaCopy = {
   iphoneQ: 'Tem iPhone?',
   iphoneA: 'O Calarmi já está na App Store: não precisa entrar em nada.',
   footLink: 'Beta para Android',
-  ctaLink: 'Tem Android? Participe do beta',
+  button: { l1: 'Tem Android?', l2: 'Entre no beta' },
 };
 
 const de: BetaCopy = {
@@ -239,7 +239,7 @@ const de: BetaCopy = {
   iphoneQ: 'Du hast ein iPhone?',
   iphoneA: 'Calarmi gibt es schon im App Store: Du musst nirgends beitreten.',
   footLink: 'Android-Beta',
-  ctaLink: 'Du hast Android? Mach bei der Beta mit',
+  button: { l1: 'Du hast Android?', l2: 'Beta testen' },
 };
 
 export const beta: Record<Lang, BetaCopy> = { es, en, pt, de };
